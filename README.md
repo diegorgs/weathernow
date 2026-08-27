@@ -1,2 +1,2 @@
-# climanow
-🌦️ ClimaNow  Previsão meteorológica rápida, precisa e intuitiva.
+# ClimaAgora
+# ClimaAgora Previsão meteorológica rápida, precisa e intuitiva.
