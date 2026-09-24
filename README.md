@@ -1,2 +1,2 @@
-# ClimaAgora
-# ClimaAgora Previsão meteorológica rápida, precisa e intuitiva.
+# WaetherNow
+# WaetherNow Previsão meteorológica rápida, precisa e intuitiva.
