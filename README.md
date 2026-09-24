@@ -1,2 +1,2 @@
-# WaetherNow
-# WaetherNow Previsão meteorológica rápida, precisa e intuitiva.
+# WeatherNow
+# WeatherNow Previsão meteorológica rápida, precisa e intuitiva.
