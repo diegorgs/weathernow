@@ -1,32 +1,50 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+# 🌦️ Clima Agora
 
-Currently, two official plugins are available:
+Aplicação web desenvolvida em React para consulta e visualização de informações meteorológicas.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Tecnologias
 
-## React Compiler
+* React
+* TypeScript
+* Vite
+* API Open-Meteo
+* CSS
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📌 Funcionalidades
 
-## Expanding the Oxlint configuration
+* Consulta de condições meteorológicas
+* Temperatura atual
+* Previsão do tempo
+* Probabilidade de chuva
+* Precipitação
+* Velocidade e rajadas de vento
+* Alertas meteorológicos
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## ▶️ Como executar
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+Clone o repositório:
+
+```bash
+git clone https://github.com/diegorgs/climaagora.git
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Entre na pasta:
+
+```bash
+cd climaagora
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+Execute o projeto:
+
+```bash
+npm run dev
+```
+
+O projeto estará disponível no endereço informado pelo Vite no terminal.
