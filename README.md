@@ -1,5 +1,5 @@
 
-# 🌦️ Clima Agora
+# 🌦️ Weather Now
 
 Aplicação web desenvolvida em React para consulta e visualização de informações meteorológicas.
 
