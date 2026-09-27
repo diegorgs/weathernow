@@ -1,30 +1,57 @@
 function Navbar() {
     return (
-        <nav className="bg-blue-500 p-4 text-white flex justify-between items-center">
-            <div className="text-lg font-bold">
-                Weather Now
-            </div>
+        <header className="border-b border-gray-200 bg-white">
+            <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+                <a
+                    href="/"
+                    className="text-xl font-bold text-gray-900"
+                >
+                    Weather Now
+                </a>
 
-            <ul className="flex">
-                <li className="ml-4">
-                    <a href="/" className="hover:underline">
-                        Home
-                    </a>
-                </li>
+                <div className="flex items-center gap-8">
+                    <div className="hidden items-center gap-6 md:flex">
+                        <a
+                            href="/"
+                            className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+                        >
+                            Tempo
+                        </a>
 
-                <li className="ml-4">
-                    <a href="/about" className="hover:underline">
-                        About
-                    </a>
-                </li>
+                        <a
+                            href="/previsao"
+                            className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+                        >
+                            Previsão
+                        </a>
 
-                <li className="ml-4">
-                    <a href="/contact" className="hover:underline">
-                        Contact
-                    </a>
-                </li>
-            </ul>
-        </nav>
+                        <a
+                            href="/"
+                            className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+                        >
+                            ...
+                        </a>
+                    </div>
+
+                    <button
+                        type="button"
+                        aria-label="Pesquisar"
+                        className="text-gray-600 transition hover:text-blue-600"
+                    >
+                        Procurar
+                    </button>
+
+                    <button
+                        type="button"
+                        aria-label="Perfil"
+                        className="text-gray-600 transition hover:text-blue-600"
+                    >
+                        👤
+                    </button>
+                </div>
+            </nav>
+        </header>
     )
 }
-export default Navbar; 
+
+export default Navbar
