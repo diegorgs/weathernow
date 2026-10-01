@@ -48,3 +48,27 @@ npm run dev
 ```
 
 O projeto estará disponível no endereço informado pelo Vite no terminal.
+
+O que atualmente existe e NÃO existe:
+
+[x] projeto React
+[x] TypeScript
+[x] Vite
+[x] Tailwind
+[x] Router
+[x] Navbar
+[x] layout inicial
+[x] WeatherCard visual
+[x] WeatherStats visual
+
+[ ] chamada de API
+[ ] geocoding
+[ ] busca
+[ ] estado
+[ ] props meteorológicas
+[ ] previsão por hora
+[ ] previsão semanal
+[ ] loading
+[ ] erros
+[ ] alertas
+[ ] dados reais
