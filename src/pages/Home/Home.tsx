@@ -20,10 +20,18 @@ function Home() {
 
                 <section className="mt-8 rounded-2xl bg-white p-4 shadow-sm">
                     <div className="grid gap-4 md:grid-cols-2">
-                        <WeatherCard />
+                        <WeatherCard 
+                            tempeature={50}
+                            condition="Ensolarado"
+                        />
 
                         <div className="grid grid-cols-2 gap-4">
-                            <WeatherStats />
+                            <WeatherStats 
+                                humidity={20}
+                                windSpeed={45}
+                                rainProbability={000}
+                                visibility={001}
+                            />
                         </div>
                     </div>
                 </section>

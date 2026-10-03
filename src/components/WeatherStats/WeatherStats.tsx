@@ -1,4 +1,11 @@
-function WeatherStats() {
+type WeatherStatsProps = {
+    humidity: number
+    windSpeed: number
+    rainProbability: number
+    visibility: number
+}
+
+function WeatherStats({ humidity, windSpeed, rainProbability, visibility }: WeatherStatsProps) {
     return (
         <>
             <div className="flex items-center justify-center rounded-2xl bg-gray-50 p-5">
@@ -10,7 +17,7 @@ function WeatherStats() {
                     </p>
 
                     <p className="mt-1 text-xl font-semibold text-gray-900">
-                        72%
+                        {humidity}%
                     </p>
                 </div>
             </div>
@@ -24,7 +31,7 @@ function WeatherStats() {
                     </p>
 
                     <p className="mt-1 text-xl font-semibold text-gray-900">
-                        13 km/h
+                        {windSpeed} km/h
                     </p>
                 </div>
             </div>
@@ -38,7 +45,7 @@ function WeatherStats() {
                     </p>
 
                     <p className="mt-1 text-xl font-semibold text-gray-900">
-                        30%
+                        {rainProbability}%
                     </p>
                 </div>
             </div>
@@ -52,7 +59,7 @@ function WeatherStats() {
                     </p>
 
                     <p className="mt-1 text-xl font-semibold text-gray-900">
-                        10 km
+                        {visibility} km
                     </p>
                 </div>
             </div>
