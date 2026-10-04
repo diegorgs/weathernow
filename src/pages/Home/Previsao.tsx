@@ -1,6 +1,51 @@
 import Navbar from '../../components/Navbar/Navbar'
-import WeatherCard from '../../components/WeatherCard/WeatherCard'
-import WeatherStats from '../../components/WeatherStats/WeatherStats'
+import WeeklyForecast from '../../components/WeeklyForecast/WeeklyForecast'
+
+const days = [
+    {
+        day: "Segunda",
+        min: 18,
+        max: 27,
+        condition: "Ensolarado"
+    },
+    {
+        day: "Terça",
+        min: 19,
+        max: 25,
+        condition: "Nublado"
+    },
+    {
+        day: "Quarta",
+        min: 17,
+        max: 23,
+        condition: "Chuva"
+    },
+    {
+        day: "Quinta",
+        min: 17,
+        max: 23,
+        condition: "Chuva"
+    },
+    {
+        day: "Sexta",
+        min: 17,
+        max: 23,
+        condition: "Chuva"
+    },
+    {
+        day: "Sábado",
+        min: 17,
+        max: 23,
+        condition: "Chuva"
+    },
+    {
+        day: "Domingo",
+        min: 17,
+        max: 23,
+        condition: "Chuva"
+    }
+]
+
 
 function Previsao() {
     return (
@@ -8,30 +53,20 @@ function Previsao() {
             <Navbar />
 
             <main className="mx-auto max-w-6xl px-6 py-8">
-                <section>
-                    <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
-                        PREVISAO
-                    </p>
-
-                    <p className="mt-1 text-sm text-gray-500">
-                        PREVISAO
-                    </p>
-                </section>
 
                 <section className="mt-8 rounded-2xl bg-white p-4 shadow-sm">
                     <div className="grid gap-4 md:grid-cols-2">
-                        
-                        <WeatherCard 
-                            tempeature={24}
-                            condition="Parcialmente nublado"
-                        />
-
+                            <WeeklyForecast days={days} />          
+                            
                         <div className="grid grid-cols-2 gap-4">
-                            <WeatherStats />
+                  
                         </div>
+
                     </div>
                 </section>
+
             </main>
+
         </div>
     )
 }
