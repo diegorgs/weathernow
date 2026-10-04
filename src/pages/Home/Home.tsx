@@ -1,6 +1,18 @@
 import Navbar from '../../components/Navbar/Navbar'
 import WeatherCard from '../../components/WeatherCard/WeatherCard'
 import WeatherStats from '../../components/WeatherStats/WeatherStats'
+import type { WeatherData } from '../../types/weather'
+
+
+const weather: WeatherData = {
+    temperature: 24,
+    condition: "Parcialmente nublado",
+    humidity: 72,
+    windSpeed: 13,
+    rainProbability: 30,
+    visibility: 100
+}
+
 
 function Home() {
     return (
@@ -21,16 +33,16 @@ function Home() {
                 <section className="mt-8 rounded-2xl bg-white p-4 shadow-sm">
                     <div className="grid gap-4 md:grid-cols-2">
                         <WeatherCard 
-                            tempeature={50}
-                            condition="Ensolarado"
+                            temperature={weather.temperature}
+                            condition={weather.condition}
                         />
 
                         <div className="grid grid-cols-2 gap-4">
                             <WeatherStats 
-                                humidity={20}
-                                windSpeed={45}
-                                rainProbability={000}
-                                visibility={001}
+                                humidity={weather.humidity}
+                                windSpeed={weather.windSpeed}
+                                rainProbability={weather.rainProbability}
+                                visibility={weather.visibility}
                             />
                         </div>
                     </div>
