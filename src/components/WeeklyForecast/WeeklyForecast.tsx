@@ -6,14 +6,15 @@ type WeeklyForecastProps = {
 
 function WeeklyForecast({ days }: WeeklyForecastProps) {
     return (
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-7">
             {days.map((day) => (
                 <div 
                 key={day.day} 
-                className="flex flex-col items-center justify-center rounded-2xl bg-gray-50 p-5">
+                    className="flex flex-col items-center justify-center rounded-2xl bg-gray-50 px-5 py-20 shadow-sm">
                     
                     <div className="text-center">
                         <p>{day.day}</p>
+                        <br></br>
                         <p>{day.condition}</p>
                         <p>
                             {day.min}° / {day.max}°

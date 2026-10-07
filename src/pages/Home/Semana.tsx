@@ -4,8 +4,8 @@ import WeeklyForecast from '../../components/WeeklyForecast/WeeklyForecast'
 const days = [
     {
         day: "Segunda",
-        min: 18,
-        max: 27,
+        min: 27,
+        max: 37,
         condition: "Ensolarado"
     },
     {
@@ -47,22 +47,24 @@ const days = [
 ]
 
 
-function Previsao() {
+function Semana() {
     return (
         <div className="min-h-screen bg-gray-50">
             <Navbar />
 
             <main className="mx-auto max-w-6xl px-6 py-8">
+                <section>
+                    <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
+                        São Paulo
+                    </p>
+
+                    <p className="mt-1 text-sm text-gray-500">
+                        Próximos 7 dias
+                    </p>
+                </section>
 
                 <section className="mt-8 rounded-2xl bg-white p-4 shadow-sm">
-                    <div className="grid gap-4 md:grid-cols-2">
                             <WeeklyForecast days={days} />          
-                            
-                        <div className="grid grid-cols-2 gap-4">
-                  
-                        </div>
-
-                    </div>
                 </section>
 
             </main>
@@ -71,4 +73,4 @@ function Previsao() {
     )
 }
 
-export default Previsao
+export default Semana
