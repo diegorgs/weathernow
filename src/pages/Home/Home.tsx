@@ -2,19 +2,92 @@ import Navbar from '../../components/Navbar/Navbar'
 import WeatherCard from '../../components/WeatherCard/WeatherCard'
 import WeatherStats from '../../components/WeatherStats/WeatherStats'
 import type { WeatherData } from '../../types/weather'
+import { useEffect, useState } from 'react'
+import { getWeather } from '../../services/api'
 
 
-const weather: WeatherData = {
-    temperature: 24,
-    condition: "Parcialmente nublado",
-    humidity: 72,
-    windSpeed: 13,
-    rainProbability: 30,
-    visibility: 100
+function getWeatherCondition(code: number) {
+    if (code === 0) return "Céu limpo"
+    if (code === 1) return "Principalmente limpo"
+    if (code === 2) return "Parcialmente nublado"
+    if (code === 3) return "Nublado"
+
+    if (code === 45 || code === 48) return "Neblina"
+
+    if (code >= 51 && code <= 57) return "Chuvisco"
+
+    if (code >= 61 && code <= 67) return "Chuva"
+
+    if (code >= 71 && code <= 77) return "Neve"
+
+    if (code >= 80 && code <= 82) return "Pancadas de chuva"
+
+    if (code >= 85 && code <= 86) return "Pancadas de neve"
+
+    if (code >= 95) return "Trovoada"
+
+    return "Condição desconhecida"
 }
 
-
 function Home() {
+    const [temperature, setTemperature] = useState<number | null>(null)
+    const [humidity, setHumidity] = useState<number | null>(null)
+    const [windSpeed, setWindSpeed] = useState<number | null>(null)
+    const [rainProbability, setRainProbability] = useState<number | null>(null)
+    const [visibility, setVisibility] = useState<number | null>(null)
+    const [condition, setCondition] = useState<string | null>(null)
+
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    
+
+
+    useEffect(() => {
+        async function loadWeather() {
+            try {
+                const data = await getWeather()
+
+                const currentTime = data.current.time
+                const currentHour = currentTime.slice(0, 13) + ":00"
+                const currentIndex = data.hourly.time.indexOf(currentHour)
+
+                setTemperature(data.current.temperature_2m)
+                setHumidity(data.current.relative_humidity_2m)
+                setWindSpeed(data.current.wind_speed_10m)
+
+                setCondition(getWeatherCondition(data.current.weather_code))
+
+                setRainProbability(data.hourly.precipitation_probability[currentIndex])
+
+                setVisibility(data.hourly.visibility[currentIndex] / 1000)
+            } catch {
+                setError("Não foi possível carregar os dados do tempo.")
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadWeather()
+    }, [])
+
+    const weather: WeatherData = {
+        temperature: temperature!,
+        condition: condition!,
+        humidity: humidity!,
+        windSpeed: windSpeed!,
+        rainProbability: rainProbability!,
+        visibility: visibility!
+}
+
+if (loading) {
+    return <p>Carregando...</p>
+    }
+
+if (error) {
+    return <p>{error}</p>
+}
+
     return (
         <div className="min-h-screen bg-gray-50">
             <Navbar />
