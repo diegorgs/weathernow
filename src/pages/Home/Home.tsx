@@ -3,8 +3,10 @@ import WeatherCard from '../../components/WeatherCard/WeatherCard'
 import WeatherStats from '../../components/WeatherStats/WeatherStats'
 import type { WeatherData, HoursForecast } from '../../types/weather'
 import { useEffect, useState } from 'react'
-import { getWeather } from '../../services/api'
+import { getWeather, getCityCoordinates } from '../../services/api'
 import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
+import { useContext } from 'react'
+import { CityContext } from '../../context/CityContext'
 
 
 function getWeatherCondition(code: number) {
@@ -34,8 +36,13 @@ function Home() {
 
     const [hours, setHours] = useState<HoursForecast[]>([])
 
+    const context = useContext(CityContext)
+    console.log('CIDADE NO HOME:', context?.city)
+
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    
 
 
     
@@ -44,13 +51,19 @@ function Home() {
     useEffect(() => {
         async function loadWeather() {
             try {
-                const data = await getWeather()
+                if (!context?.city) {
+                    return
+                }
+
+                const city = context.city
+
+                const data = await getWeather(city.latitude,city.longitude)
 
                 const currentTime = data.current.time
                 const currentHour = currentTime.slice(0, 13) + ":00"
                 const currentIndex = data.hourly.time.indexOf(currentHour)
 
-                setTemperature(data.current.temperature_2m)
+                setTemperature(Math.round(data.current.temperature_2m))
                 setHumidity(data.current.relative_humidity_2m)
                 setWindSpeed(data.current.wind_speed_10m)
 
@@ -71,15 +84,17 @@ function Home() {
                     }))
 
                 setHours(hourlyForecast)
-            } catch {
+            } catch (error) {
+                console.error("ERRO AO CARREGAR TEMPO:", error)
                 setError("Não foi possível carregar os dados do tempo.")
+            
             } finally {
                 setLoading(false)
             }
         }
 
         loadWeather()
-    }, [])
+    }, [context?.city])
 
     const weather: WeatherData = {
         temperature: temperature!,
