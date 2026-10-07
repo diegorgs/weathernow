@@ -1,9 +1,10 @@
 import Navbar from '../../components/Navbar/Navbar'
 import WeatherCard from '../../components/WeatherCard/WeatherCard'
 import WeatherStats from '../../components/WeatherStats/WeatherStats'
-import type { WeatherData } from '../../types/weather'
+import type { WeatherData, HoursForecast } from '../../types/weather'
 import { useEffect, useState } from 'react'
 import { getWeather } from '../../services/api'
+import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
 
 
 function getWeatherCondition(code: number) {
@@ -11,19 +12,12 @@ function getWeatherCondition(code: number) {
     if (code === 1) return "Principalmente limpo"
     if (code === 2) return "Parcialmente nublado"
     if (code === 3) return "Nublado"
-
     if (code === 45 || code === 48) return "Neblina"
-
     if (code >= 51 && code <= 57) return "Chuvisco"
-
     if (code >= 61 && code <= 67) return "Chuva"
-
     if (code >= 71 && code <= 77) return "Neve"
-
     if (code >= 80 && code <= 82) return "Pancadas de chuva"
-
     if (code >= 85 && code <= 86) return "Pancadas de neve"
-
     if (code >= 95) return "Trovoada"
 
     return "Condição desconhecida"
@@ -37,8 +31,12 @@ function Home() {
     const [visibility, setVisibility] = useState<number | null>(null)
     const [condition, setCondition] = useState<string | null>(null)
 
+
+    const [hours, setHours] = useState<HoursForecast[]>([])
+
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
 
     
 
@@ -61,6 +59,18 @@ function Home() {
                 setRainProbability(data.hourly.precipitation_probability[currentIndex])
 
                 setVisibility(data.hourly.visibility[currentIndex] / 1000)
+
+                const hourlyForecast = data.hourly.time
+                    .slice(currentIndex, currentIndex + 9)
+                    .map((time: string, index: number) => ({
+                        hour: time.slice(11, 16),
+                        temperature: data.hourly.temperature_2m[currentIndex + index],
+                        condition: getWeatherCondition(
+                            data.hourly.weather_code[currentIndex + index]
+                        )
+                    }))
+
+                setHours(hourlyForecast)
             } catch {
                 setError("Não foi possível carregar os dados do tempo.")
             } finally {
@@ -120,9 +130,18 @@ if (error) {
                         </div>
                     </div>
                 </section>
+
+                <section className="mt-8">
+                    <h2 className="mb-4 text-xl font-semibold text-gray-900">
+                        Previsão por hora
+                    </h2>
+
+                    <HourlyForecast hours={hours} />
+                </section>
             </main>
         </div>
     )
 }
 
 export default Home
+
