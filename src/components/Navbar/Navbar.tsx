@@ -12,24 +12,24 @@ function Navbar() {
                 <div className="flex items-center gap-8">
                     <div className="hidden items-center gap-6 md:flex">
                         <a
-                            href="/"
+                            href="/Hora"
                             className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
                         >
-                            Tempo
+                            Previsão por Hora
                         </a>
 
                         <a
-                            href="/previsao"
+                            href="/Semana"
                             className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
                         >
-                            Previsão
+                            Previsão da Semana
                         </a>
 
                         <a
-                            href="/"
+                            href="/Mapa"
                             className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
                         >
-                            ...
+                            Mapa
                         </a>
                     </div>
 

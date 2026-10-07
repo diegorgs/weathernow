@@ -13,3 +13,9 @@ export type DailyForecast = {
     max: number
     condition: string
 }
+
+export type HoursForecast = {
+    hour: string
+    temperature: number
+    condition: string
+}
