@@ -4,8 +4,7 @@ import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
 import type { HoursForecast } from '../../types/weather'
 
 import { useEffect, useState } from 'react'
-import { getWeather } from '../../services/api'
-
+import { getWeather, getCityCoordinates } from '../../services/api'
 
 function getWeatherCondition(code: number) {
     if (code === 0) return "Céu limpo"
@@ -44,7 +43,9 @@ function Hora() {
 
             try {
 
-                const data = await getWeather()
+                const city = await getCityCoordinates("São José dos Campos")
+
+                const data = await getWeather(city.latitude,city.longitude)
 
                 const currentTime = data.current.time
 
@@ -60,7 +61,7 @@ function Hora() {
                         hour: time.slice(11, 16),
 
                         temperature:
-                            data.hourly.temperature_2m[currentIndex + index],
+                            Math.round(data.hourly.temperature_2m[currentIndex + index]),
 
                         condition: getWeatherCondition(
                             data.hourly.weather_code[currentIndex + index]
