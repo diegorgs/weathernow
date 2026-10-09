@@ -7,6 +7,7 @@ import { getWeather, getCityCoordinates } from '../../services/api'
 import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
 import { useContext } from 'react'
 import { CityContext } from '../../context/CityContext'
+import Maps from '../../components/Maps/Maps'
 
 
 function getWeatherCondition(code: number) {
@@ -153,6 +154,7 @@ if (error) {
 
                     <HourlyForecast hours={hours} />
                 </section>
+                <Maps />
             </main>
         </div>
     )
