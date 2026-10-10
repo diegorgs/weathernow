@@ -3,8 +3,9 @@ import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
 
 import type { HoursForecast } from '../../types/weather'
 
-import { useEffect, useState } from 'react'
-import { getWeather, getCityCoordinates } from '../../services/api'
+import { useContext, useEffect, useState } from 'react'
+import { getWeather } from '../../services/api'
+import { CityContext } from '../../context/CityContext'
 
 function getWeatherCondition(code: number) {
     if (code === 0) return "Céu limpo"
@@ -35,17 +36,19 @@ function Hora() {
     const [hours, setHours] = useState<HoursForecast[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-
+    const context = useContext(CityContext)
+    const city = context?.city
 
     useEffect(() => {
 
         async function loadWeather() {
 
             try {
+                if (!city) {
+                    return
+                }
 
-                const city = await getCityCoordinates("São José dos Campos")
-
-                const data = await getWeather(city.latitude,city.longitude)
+                const data = await getWeather(city.latitude, city.longitude)
 
                 const currentTime = data.current.time
 
@@ -86,7 +89,7 @@ function Hora() {
 
         loadWeather()
 
-    }, [])
+    }, [city])
 
 
     if (loading) {

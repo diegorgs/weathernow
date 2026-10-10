@@ -3,7 +3,7 @@ import WeatherCard from '../../components/WeatherCard/WeatherCard'
 import WeatherStats from '../../components/WeatherStats/WeatherStats'
 import type { WeatherData, HoursForecast } from '../../types/weather'
 import { useEffect, useState } from 'react'
-import { getWeather, getCityCoordinates } from '../../services/api'
+import { getWeather } from '../../services/api'
 import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
 import { useContext } from 'react'
 import { CityContext } from '../../context/CityContext'
@@ -38,27 +38,20 @@ function Home() {
     const [hours, setHours] = useState<HoursForecast[]>([])
 
     const context = useContext(CityContext)
-    console.log('CIDADE NO HOME:', context?.city)
+    const city = context?.city
 
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    
-
-
-    
-
-
     useEffect(() => {
         async function loadWeather() {
             try {
-                if (!context?.city) {
+                if (!city) {
+                    setLoading(true)
                     return
                 }
 
-                const city = context.city
-
-                const data = await getWeather(city.latitude,city.longitude)
+                const data = await getWeather(city.latitude, city.longitude)
 
                 const currentTime = data.current.time
                 const currentHour = currentTime.slice(0, 13) + ":00"
@@ -95,7 +88,7 @@ function Home() {
         }
 
         loadWeather()
-    }, [context?.city])
+    }, [city])
 
     const weather: WeatherData = {
         temperature: temperature!,
@@ -132,16 +125,16 @@ if (error) {
                 <section className="mt-8 rounded-2xl bg-white p-4 shadow-sm">
                     <div className="grid gap-4 md:grid-cols-2">
                         <WeatherCard 
-                            temperature={weather.temperature}
-                            condition={weather.condition}
+                            temperature ={Math.round(weather.temperature)}
+                            condition ={weather.condition}
                         />
 
                         <div className="grid grid-cols-2 gap-4">
                             <WeatherStats 
-                                humidity={weather.humidity}
-                                windSpeed={weather.windSpeed}
-                                rainProbability={weather.rainProbability}
-                                visibility={weather.visibility}
+                                humidity={Math.round(weather.humidity)}
+                                windSpeed={Math.round(weather.windSpeed)}
+                                rainProbability={Math.round(weather.rainProbability)}
+                                visibility={Math.round(weather.visibility)}
                             />
                         </div>
                     </div>
