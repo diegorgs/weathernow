@@ -17,7 +17,7 @@ function HourlyForecast({ hours }: HoursForecastProps) {
                         <br></br>
                         <p>{hour.condition}</p>
                         <p>
-                            {hour.temperature}°
+                            {Math.round(hour.temperature)}°
                         </p>
                     </div>
 

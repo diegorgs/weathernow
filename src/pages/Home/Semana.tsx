@@ -3,8 +3,9 @@ import WeeklyForecast from '../../components/WeeklyForecast/WeeklyForecast'
 
 import type { DailyForecast } from '../../types/weather'
 
-import { useEffect, useState } from 'react'
-import { getWeather, getCityCoordinates } from '../../services/api'
+import { useContext, useEffect, useState } from 'react'
+import { getWeather } from '../../services/api'
+import { CityContext } from '../../context/CityContext'
 
 function getWeatherCondition(code: number) {
     if (code === 0) return "Céu limpo"
@@ -35,16 +36,19 @@ function Semana() {
     const [days, setDays] = useState<DailyForecast[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-
+    const context = useContext(CityContext)
+    const city = context?.city
 
     useEffect(() => {
 
         async function loadWeather() {
 
             try {
-                const city = await getCityCoordinates("São José dos Campos")
-                
-                const data = await getWeather(city.latitude,city.longitude)
+                if (!city) {
+                    return
+                }
+
+                const data = await getWeather(city.latitude, city.longitude)
 
 
                 const dailyForecast = data.daily.time.map(
@@ -83,7 +87,7 @@ function Semana() {
 
         loadWeather()
 
-    }, [])
+    }, [city])
 
 
     if (loading) {
