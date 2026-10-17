@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { CityContext } from "../../context/CityContext";
+import { getCityFromCoordinates } from "../../services/api";
 
 type Coordinates = {
   lat: number;
@@ -28,13 +29,24 @@ export default function WindyMap() {
     setStatus("Solicitando sua localização...");
 
     navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        context?.setCity({
-          name: "Minha localização",
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-        });
-        setStatus("Exibindo sua localização atual");
+      async ({ coords }) => {
+        try {
+          const cityInfo = await getCityFromCoordinates(coords.latitude, coords.longitude);
+
+          context?.setCity({
+            name: cityInfo.name || "Localização atual",
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          });
+          setStatus(`Exibindo ${cityInfo.name || "sua localização"}`);
+        } catch {
+          context?.setCity({
+            name: "Localização atual",
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          });
+          setStatus("Exibindo sua localização atual");
+        }
       },
       () => {
         context?.setCity({
@@ -84,10 +96,13 @@ export default function WindyMap() {
     <section className="w-full">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-semibold text-slate-800">
+          <h2
+            className="text-2xl font-semibold"
+            style={{ color: 'var(--text-primary)' }}
+          >
             Mapa meteorológico
           </h2>
-          <p className="text-sm text-slate-500">{status}</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{status}</p>
         </div>
 
         <button
@@ -99,15 +114,21 @@ export default function WindyMap() {
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
         <iframe
           key={`${position.lat}-${position.lon}`}
           title="Mapa meteorológico Windy"
           src={mapUrl.toString()}
-          className="h-112.5 w-full"
-          loading="lazy"
-          allow="geolocation"
+          loading="eager"
+          allow="geolocation; fullscreen"
           allowFullScreen
+          style={{
+            width: '100%',
+            height: '520px',
+            border: '0',
+            display: 'block',
+            background: '#e2e8f0',
+          }}
         />
       </div>
     </section>
