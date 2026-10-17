@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from 'react'
+import { getCityFromCoordinates } from '../services/api'
 
 type City = {
     name: string
@@ -29,12 +30,22 @@ export function CityProvider({ children }: { children: React.ReactNode }) {
         }
 
         navigator.geolocation.getCurrentPosition(
-            ({ coords }) => {
-                setCity({
-                    name: 'Minha localização',
-                    latitude: coords.latitude,
-                    longitude: coords.longitude,
-                })
+            async ({ coords }) => {
+                try {
+                    const cityInfo = await getCityFromCoordinates(coords.latitude, coords.longitude)
+
+                    setCity({
+                        name: cityInfo.name || 'Localização atual',
+                        latitude: coords.latitude,
+                        longitude: coords.longitude,
+                    })
+                } catch {
+                    setCity({
+                        name: 'Localização atual',
+                        latitude: coords.latitude,
+                        longitude: coords.longitude,
+                    })
+                }
             },
             () => {
                 setCity(DEFAULT_CITY)

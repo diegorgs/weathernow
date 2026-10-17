@@ -5,6 +5,7 @@ import type { HoursForecast } from '../../types/weather'
 import { useEffect, useState } from 'react'
 import { getWeather } from '../../services/api'
 import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
+import WindyMap from '../../components/Maps/Maps'
 import { useContext } from 'react'
 import { CityContext } from '../../context/CityContext'
 
@@ -16,7 +17,10 @@ type HourMetric = {
     windSpeed: number
     rainProbability: number
     visibility: number
+    uvIndex: number
 }
+
+type MetricKey = 'temperature' | 'humidity' | 'wind' | 'rain' | 'visibility' | 'uv'
 
 function formatSelectedDate(dateString: string) {
     const date = new Date(`${dateString}T12:00:00`)
@@ -50,6 +54,7 @@ function Home() {
     const [windSpeed, setWindSpeed] = useState<number>(13)
     const [rainProbability, setRainProbability] = useState<number>(35)
     const [visibility, setVisibility] = useState<number>(16)
+    const [uvIndex, setUvIndex] = useState<number>(4)
     const [condition, setCondition] = useState<string>('Parcialmente nublado')
     const [hours, setHours] = useState<HoursForecast[]>([])
     const [hourlyMetrics, setHourlyMetrics] = useState<HourMetric[]>([])
@@ -57,7 +62,7 @@ function Home() {
     const [selectedHourIndex, setSelectedHourIndex] = useState(0)
     const [selectedHourLabel, setSelectedHourLabel] = useState('Agora')
     const [selectedDateLabel, setSelectedDateLabel] = useState('Hoje')
-    const [selectedMetric, setSelectedMetric] = useState<'humidity' | 'wind' | 'rain' | 'visibility' | null>(null)
+    const [selectedMetric, setSelectedMetric] = useState<MetricKey | null>(null)
     const [currentHourIndex, setCurrentHourIndex] = useState(0)
     const [forecastData, setForecastData] = useState<any>(null)
     const [loading, setLoading] = useState(true)
@@ -85,6 +90,7 @@ function Home() {
                 setTemperature(Math.round(data.current.temperature_2m))
                 setHumidity(data.current.relative_humidity_2m)
                 setWindSpeed(data.current.wind_speed_10m)
+                setUvIndex(data.current.uv_index ?? data.hourly.uv_index[currentIndex] ?? 0)
                 setCondition(currentCondition)
                 setSelectedHourLabel('Agora')
                 setSelectedHourIndex(0)
@@ -107,10 +113,11 @@ function Home() {
                             condition: getWeatherCondition(
                                 data.hourly.weather_code[sourceIndex]
                             ),
-                            humidity: data.current.relative_humidity_2m,
-                            windSpeed: data.current.wind_speed_10m,
+                            humidity: data.hourly.relative_humidity_2m[sourceIndex],
+                            windSpeed: data.hourly.wind_speed_10m[sourceIndex],
                             rainProbability: data.hourly.precipitation_probability[sourceIndex],
                             visibility: data.hourly.visibility[sourceIndex] / 1000,
+                            uvIndex: data.hourly.uv_index[sourceIndex] ?? 0,
                         }
                     })
 
@@ -147,6 +154,7 @@ function Home() {
             setWindSpeed(currentHourStats.windSpeed)
             setRainProbability(currentHourStats.rainProbability)
             setVisibility(currentHourStats.visibility)
+            setUvIndex(currentHourStats.uvIndex)
         }
     }
 
@@ -175,10 +183,11 @@ function Home() {
                     condition: getWeatherCondition(
                         forecastData.hourly.weather_code[sourceIndex]
                     ),
-                    humidity: forecastData.current.relative_humidity_2m,
-                    windSpeed: forecastData.current.wind_speed_10m,
+                    humidity: forecastData.hourly.relative_humidity_2m[sourceIndex],
+                    windSpeed: forecastData.hourly.wind_speed_10m[sourceIndex],
                     rainProbability: forecastData.hourly.precipitation_probability[sourceIndex],
                     visibility: forecastData.hourly.visibility[sourceIndex] / 1000,
+                    uvIndex: forecastData.hourly.uv_index[sourceIndex] ?? 0,
                 }
             })
 
@@ -195,18 +204,67 @@ function Home() {
         setWindSpeed(forecastData.current.wind_speed_10m)
         setRainProbability(firstHour?.rainProbability ?? forecastData.hourly.precipitation_probability[currentHourIndex])
         setVisibility((firstHour?.visibility ?? forecastData.hourly.visibility[currentHourIndex] / 1000))
+        setUvIndex(firstHour?.uvIndex ?? forecastData.hourly.uv_index[currentHourIndex] ?? forecastData.current.uv_index ?? 0)
         setHours(nextHours.map(({ hour, temperature, condition }) => ({ hour, temperature, condition })))
         setHourlyMetrics(nextHours)
     }
 
     const metricDisplay = selectedMetric
         ? {
+            temperature: { label: 'Temperatura', value: `${temperature}°C`, icon: '🌡️' },
             humidity: { label: 'Umidade', value: `${humidity}%`, icon: '💧' },
             wind: { label: 'Vento', value: `${windSpeed} km/h`, icon: '💨' },
             rain: { label: 'Chance de chuva', value: `${rainProbability}%`, icon: '🌧️' },
             visibility: { label: 'Visibilidade', value: `${visibility} km`, icon: '👁️' },
+            uv: { label: 'UV', value: `${uvIndex} UV`, icon: '☀️' },
         }[selectedMetric]
         : null
+
+    const activeMetric = (selectedMetric ?? 'humidity') as MetricKey
+
+    const chartMetricConfig: Record<MetricKey, { label: string; color: string; unit: string; accessor: (item: HourMetric) => number }> = {
+        temperature: { label: 'Temperatura', color: '#f97316', unit: '°C', accessor: (item) => item.temperature },
+        humidity: { label: 'Umidade', color: '#38bdf8', unit: '%', accessor: (item) => item.humidity },
+        wind: { label: 'Vento', color: '#34d399', unit: 'km/h', accessor: (item) => item.windSpeed },
+        rain: { label: 'Prob. de chuva', color: '#60a5fa', unit: '%', accessor: (item) => item.rainProbability },
+        visibility: { label: 'Visibilidade', color: '#f59e0b', unit: 'km', accessor: (item) => item.visibility },
+        uv: { label: 'UV', color: '#a78bfa', unit: 'UV', accessor: (item) => item.uvIndex },
+    }
+
+    const chartPoints = hourlyMetrics.length
+        ? hourlyMetrics.map((item) => ({
+            label: item.hour,
+            value: chartMetricConfig[activeMetric].accessor(item),
+        }))
+        : []
+
+    const chartConfig = chartMetricConfig[activeMetric]
+
+    const formatChartValue = (value: number) => {
+        if (chartConfig.unit === '%') {
+            return `${Math.round(value)}%`
+        }
+
+        if (chartConfig.unit === 'km/h' || chartConfig.unit === 'km' || chartConfig.unit === 'UV' || chartConfig.unit === '°C') {
+            return `${Number.isInteger(value) ? Math.round(value) : value.toFixed(1)}${chartConfig.unit}`
+        }
+
+        return `${value.toFixed(1)}${chartConfig.unit}`
+    }
+
+    const chartWidth = 760
+    const chartHeight = 220
+    const padding = 22
+    const values = chartPoints.map((point) => point.value)
+    const minValue = Math.min(...values, 0)
+    const maxValue = Math.max(...values, 100)
+    const valueRange = maxValue - minValue || 1
+
+    const linePath = chartPoints.map((point, index) => {
+        const x = padding + (index * (chartWidth - padding * 2)) / Math.max(chartPoints.length - 1, 1)
+        const y = chartHeight - padding - ((point.value - minValue) / valueRange) * (chartHeight - padding * 2)
+        return `${index === 0 ? 'M' : 'L'} ${x} ${y}`
+    }).join(' ')
 
     const weekly = [
         { day: 'Hoje', min: 18, max: 24, condition: 'parcialmente nublado' },
@@ -229,7 +287,52 @@ function Home() {
     ]
 
     if (loading) {
-        return <p className="p-8 text-slate-700">Carregando...</p>
+        return (
+            <div className="weather-page">
+                <Navbar />
+
+                <main className="weather-shell">
+                    <div className="top-header loading-header">
+                        <div className="header-city loading-header-city">
+                            <span className="eyebrow">Capital</span>
+                            <span className="loading-title loading-shimmer" />
+                            <span className="loading-date loading-shimmer" />
+                        </div>
+
+                        <div className="header-meta loading-meta-wrap">
+                            <span className="loading-meta-pill loading-shimmer" />
+                            <span className="loading-meta-pill loading-shimmer" />
+                        </div>
+                    </div>
+
+                    <section className="weather-main-card loading-main-card">
+                        <div className="weather-left loading-weather-card">
+                            <div className="topline loading-topline">
+                                <span className="loading-line short loading-shimmer" />
+                            </div>
+
+                            <div className="weather-temp-row loading-temp-row">
+                                <span className="loading-temp loading-shimmer" />
+                                <span className="loading-icon loading-shimmer" />
+                            </div>
+
+                            <span className="loading-line medium loading-shimmer" />
+                            <span className="loading-line small loading-shimmer" />
+                        </div>
+
+                        <div className="weather-stats-grid loading-stats-grid">
+                            {Array.from({ length: 6 }).map((_, index) => (
+                                <div key={index} className="weather-stat loading-stat">
+                                    <span className="loading-card-line loading-shimmer" />
+                                    <span className="loading-card-line medium loading-shimmer" />
+                                    <span className="loading-card-line small loading-shimmer" />
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </main>
+            </div>
+        )
     }
 
     if (error) {
@@ -249,7 +352,7 @@ function Home() {
                     </div>
 
                     <div className="header-meta">
-                        <span>São Paulo</span>
+                        <span>{city?.name ?? 'São Paulo'}</span>
                         <span>Atualizado há 8 min</span>
                     </div>
                 </div>
@@ -264,10 +367,12 @@ function Home() {
 
                     <div className="weather-stats-grid">
                         <WeatherStats
+                            temperature={temperature}
                             humidity={humidity}
                             windSpeed={windSpeed}
                             rainProbability={rainProbability}
                             visibility={visibility}
+                            uvIndex={uvIndex}
                             selectedMetric={selectedMetric}
                             onMetricSelect={(metric) => setSelectedMetric((current) => (current === metric ? null : metric))}
                         />
@@ -284,6 +389,82 @@ function Home() {
                         selectedIndex={selectedHourIndex}
                         onHourSelect={handleHourSelect}
                     />
+                </section>
+
+                <section className="section-box chart-panel">
+                    <div className="section-head chart-head">
+                        <h3>{chartConfig.label} ao longo do dia</h3>
+                        <div className="chart-meta">
+                            <span className="chart-meta-pill">Métrica: {chartConfig.label}</span>
+                            <span className="chart-meta-pill">Dimensão: {chartConfig.unit}</span>
+                        </div>
+                    </div>
+
+                    {chartPoints.length > 0 ? (
+                        <div className="metric-chart-wrap">
+                            <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="metric-chart" role="img" aria-label={`Gráfico de ${chartConfig.label}`}>
+                                <defs>
+                                    <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                                        <stop offset="0%" stopColor={chartConfig.color} stopOpacity="0.45" />
+                                        <stop offset="100%" stopColor={chartConfig.color} stopOpacity="0.06" />
+                                    </linearGradient>
+                                </defs>
+
+                                {[0, 1, 2, 3].map((step) => {
+                                    const y = padding + (step * (chartHeight - padding * 2)) / 3
+                                    return (
+                                        <line
+                                            key={step}
+                                            x1={padding}
+                                            x2={chartWidth - padding}
+                                            y1={y}
+                                            y2={y}
+                                            stroke="rgba(148, 163, 184, 0.18)"
+                                            strokeDasharray="4 6"
+                                        />
+                                    )
+                                })}
+
+                                <text x="18" y="18" fill="rgba(100, 116, 139, 0.9)" fontSize="11" fontWeight="700">{chartConfig.label}</text>
+                                <text x="18" y="205" fill="rgba(100, 116, 139, 0.9)" fontSize="11" fontWeight="700">Hora</text>
+                                <text x="18" y="110" fill="rgba(100, 116, 139, 0.9)" fontSize="11" fontWeight="700" transform="rotate(-90 18 110)">Dimensão ({chartConfig.unit})</text>
+
+                                <path d={`${linePath} L ${chartWidth - padding} ${chartHeight - padding} L ${padding} ${chartHeight - padding} Z`} fill="url(#chartGradient)" opacity="0.9" />
+                                <path d={linePath} fill="none" stroke={chartConfig.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+
+                                {chartPoints.map((point, index) => {
+                                    const x = padding + (index * (chartWidth - padding * 2)) / Math.max(chartPoints.length - 1, 1)
+                                    const y = chartHeight - padding - ((point.value - minValue) / valueRange) * (chartHeight - padding * 2)
+                                    const labelText = formatChartValue(point.value)
+
+                                    return (
+                                        <g key={`${point.label}-${index}`}>
+                                            <circle cx={x} cy={y} r="4.5" fill={chartConfig.color} stroke="#ffffff" strokeWidth="2" />
+                                            <text
+                                                x={x}
+                                                y={y - 12}
+                                                textAnchor="middle"
+                                                fontSize="10"
+                                                fontWeight="700"
+                                                fill={chartConfig.color}
+                                                stroke="none"
+                                            >
+                                                {labelText}
+                                            </text>
+                                        </g>
+                                    )
+                                })}
+                            </svg>
+
+                            <div className="metric-chart-labels">
+                                {chartPoints.map((point) => (
+                                    <span key={point.label}>{point.label}</span>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="empty-chart">Sem dados para exibir.</p>
+                    )}
                 </section>
 
                 <section className="section-box">
@@ -314,7 +495,7 @@ function Home() {
                 <section className="section-box">
                     <div className="section-head">
                         <h3>Calendário</h3>
-                        <span style={{ fontSize: '12px', color: '#64748b' }}>Maio 2025</span>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Maio 2025</span>
                     </div>
 
                     <div className="calendar-grid">
@@ -337,9 +518,7 @@ function Home() {
                         <h3>Mapa meteorológico</h3>
                     </div>
 
-                    <div className="map-box">
-                        <div className="map-marker" />
-                    </div>
+                    <WindyMap />
                 </section>
 
                 <div className="alert-row">
@@ -360,7 +539,7 @@ function Home() {
                 <section className="section-box" style={{ marginTop: '20px' }}>
                     <div className="section-head">
                         <h3>Meus locais</h3>
-                        <span style={{ fontSize: '12px', color: '#64748b' }}>+ Adicionar cidade</span>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>+ Adicionar cidade</span>
                     </div>
 
                     <div className="favorites-row">

@@ -4,13 +4,28 @@ type WeeklyForecastProps = {
     days: DailyForecast[]
 }
 
-const weekIcons: Record<string, string> = {
-    'céu limpo': '☀️',
-    'principalmente limpo': '🌤️',
-    'parcialmente nublado': '⛅',
-    nublado: '☁️',
-    chuva: '🌧️',
-    'pancadas de chuva': '🌦️',
+const weekIcons: Record<string, { day: string; night: string }> = {
+    'ceu limpo': { day: '☀️', night: '🌙' },
+    'principalmente limpo': { day: '🌤️', night: '🌙' },
+    'parcialmente nublado': { day: '⛅', night: '🌙☁️' },
+    nublado: { day: '☁️', night: '☁️' },
+    chuva: { day: '🌧️', night: '🌧️' },
+    'pancadas de chuva': { day: '🌦️', night: '🌧️🌙' },
+}
+
+function normalizeCondition(condition: string) {
+    return condition
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+}
+
+function getWeekNightAwareIcon(condition: string) {
+    const hour = new Date().getHours()
+    const isNight = hour >= 18 || hour <= 5
+    const variant = weekIcons[normalizeCondition(condition)] ?? { day: '☀️', night: '🌙' }
+    return isNight ? variant.night : variant.day
 }
 
 function WeeklyForecast({ days }: WeeklyForecastProps) {
@@ -31,7 +46,7 @@ function WeeklyForecast({ days }: WeeklyForecastProps) {
                     <div className="day">{day.day}</div>
                     <div className="rain">{Math.round((day.min + day.max) / 2) >= 24 ? '30% chance de chuva' : '15% chance de chuva'}</div>
                     <div className="temps">
-                        <span>{weekIcons[day.condition.toLowerCase()] ?? '☀️'}</span>
+                        <span>{getWeekNightAwareIcon(day.condition)}</span>
                         <span style={{ marginLeft: '10px' }}>{day.min}° / {day.max}°</span>
                     </div>
                 </div>

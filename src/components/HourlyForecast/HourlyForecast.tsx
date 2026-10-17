@@ -6,15 +6,33 @@ type HoursForecastProps = {
     onHourSelect?: (hour: HoursForecast, index: number) => void
 }
 
-const quickIcons: Record<string, string> = {
-    claro: '☀️',
-    'céu limpo': '☀️',
-    'parcialmente nublado': '⛅',
-    nublado: '☁️',
-    chuva: '🌧️',
-    trovoada: '⛈️',
-    neblina: '🌫️',
-    neve: '❄️',
+const quickIcons: Record<string, { day: string; night: string }> = {
+    claro: { day: '☀️', night: '🌙' },
+    'ceu limpo': { day: '☀️', night: '🌙' },
+    'principalmente limpo': { day: '🌤️', night: '🌙' },
+    'parcialmente nublado': { day: '⛅', night: '🌙☁️' },
+    nublado: { day: '☁️', night: '☁️' },
+    chuva: { day: '🌧️', night: '🌧️' },
+    'pancadas de chuva': { day: '🌦️', night: '🌧️🌙' },
+    trovoada: { day: '⛈️', night: '⛈️' },
+    neblina: { day: '🌫️', night: '🌫️' },
+    neve: { day: '❄️', night: '❄️' },
+}
+
+function normalizeCondition(condition: string) {
+    return condition
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+}
+
+function getNightAwareIcon(condition: string, label: string) {
+    const match = label.match(/(\d{1,2})/)
+    const hour = match ? Number(match[1]) : new Date().getHours()
+    const isNight = hour >= 18 || hour <= 5
+    const variant = quickIcons[normalizeCondition(condition)] ?? { day: '☀️', night: '🌙' }
+    return isNight ? variant.night : variant.day
 }
 
 function HourlyForecast({ hours, selectedIndex = 0, onHourSelect }: HoursForecastProps) {
@@ -44,7 +62,7 @@ function HourlyForecast({ hours, selectedIndex = 0, onHourSelect }: HoursForecas
                         style={{ cursor: 'pointer' }}
                     >
                         <span className="time">{hour.hour}</span>
-                        <span className="mini-icon">{quickIcons[hour.condition.toLowerCase()] ?? '☀️'}</span>
+                        <span className="mini-icon">{getNightAwareIcon(hour.condition, hour.hour)}</span>
                         <span className="temp">{Math.round(hour.temperature)}°</span>
                     </button>
                 )
