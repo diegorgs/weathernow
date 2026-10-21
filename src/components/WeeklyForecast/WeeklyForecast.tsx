@@ -7,10 +7,10 @@ type WeeklyForecastProps = {
 const weekIcons: Record<string, { day: string; night: string }> = {
     'ceu limpo': { day: '☀️', night: '🌙' },
     'principalmente limpo': { day: '🌤️', night: '🌙' },
-    'parcialmente nublado': { day: '⛅', night: '🌙☁️' },
+    'parcialmente nublado': { day: '⛅', night: '☁️' },
     nublado: { day: '☁️', night: '☁️' },
     chuva: { day: '🌧️', night: '🌧️' },
-    'pancadas de chuva': { day: '🌦️', night: '🌧️🌙' },
+    'pancadas de chuva': { day: '🌦️', night: '🌧️' },
 }
 
 function normalizeCondition(condition: string) {
