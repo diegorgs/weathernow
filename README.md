@@ -1,74 +1,65 @@
+# WeatherNow
 
-# 🌦️ Weather Now
+Aplicação web de previsão do tempo, desenvolvida com React e TypeScript. Consulte as condições atuais, explore previsões por hora e por dia e visualize um mapa meteorológico.
 
-Aplicação web desenvolvida em React para consulta e visualização de informações meteorológicas.
+## Funcionalidades
 
-## 🚀 Tecnologias
+- Consulta de temperatura, condição do tempo, umidade, vento, probabilidade de chuva, visibilidade e índice UV.
+- Previsão por hora e previsão para os próximos dias.
+- Gráfico diário interativo para diferentes métricas meteorológicas.
+- Busca de cidades com sugestões de localização.
+- Detecção da localização do navegador, com São Paulo como localização padrão se o acesso não estiver disponível.
+- Mapa meteorológico incorporado do Windy, centralizado na localização selecionada.
+- Tema claro ou escuro, com preferência salva no navegador.
 
-* React
-* TypeScript
-* Vite
-* API Open-Meteo
-* CSS
+## Tecnologias e serviços
 
-## 📌 Funcionalidades
+- React 19, TypeScript e Vite.
+- Tailwind CSS 4.
+- [Open-Meteo](https://open-meteo.com/) para dados meteorológicos e geocodificação.
+- [Windy](https://www.windy.com/) para o mapa meteorológico.
 
-* Consulta de condições meteorológicas
-* Temperatura atual
-* Previsão do tempo
-* Probabilidade de chuva
-* Precipitação
-* Velocidade e rajadas de vento
-* Alertas meteorológicos
+As APIs são acessadas diretamente pelo navegador; não é necessário configurar uma chave de API para executar o projeto. É necessária uma conexão com a internet para carregar os dados e o mapa.
 
-## ▶️ Como executar
+## Requisitos
 
-Clone o repositório:
+- Node.js 20.19+ ou 22.12+.
+- npm.
+
+## Como executar
+
+Clone o repositório e entre na pasta:
 
 ```bash
-git clone https://github.com/diegorgs/climaagora.git
+git clone https://github.com/diegorgs/weathernow.git
+cd weathernow
 ```
 
-Entre na pasta:
-
-```bash
-cd climaagora
-```
-
-Instale as dependências:
+Instale as dependências e inicie o servidor de desenvolvimento:
 
 ```bash
 npm install
-```
-
-Execute o projeto:
-
-```bash
 npm run dev
 ```
 
-O projeto estará disponível no endereço informado pelo Vite no terminal.
+Abra no navegador o endereço exibido pelo Vite, normalmente `http://localhost:5173`.
 
-O que atualmente existe e NÃO existe:
+Para usar a localização atual, permita o acesso à localização quando solicitado pelo navegador. Se a permissão for negada ou a localização não estiver disponível, a aplicação usa São Paulo como padrão.
 
-[x] projeto React
-[x] TypeScript
-[x] Vite
-[x] Tailwind
-[x] Router
-[x] Navbar
-[x] layout inicial
-[x] WeatherCard visual
-[x] WeatherStats visual
+## Páginas
 
-[ ] chamada de API
-[ ] geocoding
-[ ] busca
-[ ] estado
-[ ] props meteorológicas
-[ ] previsão por hora
-[ ] previsão semanal
-[ ] loading
-[ ] erros
-[ ] alertas
-[ ] dados reais
+| Caminho | Conteúdo |
+| --- | --- |
+| `/` | Condições atuais, métricas, previsão por hora e gráfico |
+| `/hora` | Previsão por hora |
+| `/semana` | Previsão diária para os próximos dias |
+| `/mapa` | Mapa meteorológico do Windy |
+
+## Scripts
+
+| Comando | Descrição |
+| --- | --- |
+| `npm run dev` | Inicia o servidor de desenvolvimento |
+| `npm run build` | Verifica os tipos TypeScript e gera a versão de produção em `dist/` |
+| `npm run preview` | Serve localmente a versão de produção |
+| `npm run lint` | Executa o Oxlint |
