@@ -1,11 +1,11 @@
 import Navbar from '../../components/Navbar/Navbar'
 import WeatherCard from '../../components/WeatherCard/WeatherCard'
 import WeatherStats from '../../components/WeatherStats/WeatherStats'
+import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
+import WindyMap from '../../components/Maps/Maps'
 import type { HoursForecast } from '../../types/weather'
 import { useEffect, useState } from 'react'
 import { getWeather } from '../../services/api'
-import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
-import WindyMap from '../../components/Maps/Maps'
 import { useContext } from 'react'
 import { CityContext } from '../../context/CityContext'
 
@@ -73,13 +73,16 @@ function Home() {
 
     useEffect(() => {
         async function loadWeather() {
-            try {
                 if (!city) {
-                    setLoading(false)
                     return
                 }
-
-                const data = await getWeather(city.latitude, city.longitude)
+                setLoading(false)
+                setError(null)
+            try {
+                const data = await getWeather(
+                    city.latitude,
+                    city.longitude
+                )
 
                 const currentTime = data.current.time
                 const currentHour = currentTime.slice(0, 13) + ':00'
@@ -194,7 +197,7 @@ function Home() {
         const firstHour = nextHours[0]
 
         setSelectedDayIndex(dayIndex)
-        setSelectedHourIndex(0)
+        setSelectedHourIndex(0) 
         setSelectedHourLabel(firstHour?.hour ?? '00:00')
         setSelectedDateLabel(formatSelectedDate(forecastData.daily.time[dayIndex]))
         setSelectedMetric(null)
@@ -290,7 +293,6 @@ function Home() {
         return (
             <div className="weather-page">
                 <Navbar />
-
                 <main className="weather-shell">
                     <div className="top-header loading-header">
                         <div className="header-city loading-header-city">
@@ -379,7 +381,8 @@ function Home() {
                     </div>
                 </section>
 
-                <section className="section-box">
+                <section className="section-box scroll-mt-6.5" id="hora"
+>
                     <div className="section-head">
                         <h3>Previsão por hora</h3>
                     </div>
@@ -439,7 +442,7 @@ function Home() {
 
                                     return (
                                         <g key={`${point.label}-${index}`}>
-                                            <circle cx={x} cy={y} r="4.5" fill={chartConfig.color} stroke="#ffffff" strokeWidth="2" />
+                                            <circle cx={x} cy={y} r="4.5" fill={chartConfig.color} stroke="#fffbfd" strokeWidth="2" />
                                             <text
                                                 x={x}
                                                 y={y - 12}
@@ -467,7 +470,7 @@ function Home() {
                     )}
                 </section>
 
-                <section className="section-box">
+                <section className="section-box scroll-mt-6.5" id="semana">
                     <div className="section-head">
                         <h3>Próximos 7 dias</h3>
                     </div>
@@ -494,8 +497,9 @@ function Home() {
 
                 <section className="section-box">
                     <div className="section-head">
-                        <h3>Calendário</h3>
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Maio 2025</span>
+                        <h3>Vamos tirar isso!</h3>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}> 2026
+                        </span>
                     </div>
 
                     <div className="calendar-grid">
@@ -513,9 +517,8 @@ function Home() {
                     </div>
                 </section>
 
-                <section className="section-box">
+                <section className="section-box scroll-mt-6.5" id="mapa">
                     <div className="section-head">
-                        <h3>Mapa meteorológico</h3>
                     </div>
 
                     <WindyMap />

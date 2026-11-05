@@ -12,24 +12,16 @@ function getWeatherCondition(code: number) {
     if (code === 1) return "Principalmente limpo"
     if (code === 2) return "Parcialmente nublado"
     if (code === 3) return "Nublado"
-
     if (code === 45 || code === 48) return "Neblina"
-
     if (code >= 51 && code <= 57) return "Chuvisco"
-
     if (code >= 61 && code <= 67) return "Chuva"
-
     if (code >= 71 && code <= 77) return "Neve"
-
     if (code >= 80 && code <= 82) return "Pancadas de chuva"
-
     if (code >= 85 && code <= 86) return "Pancadas de neve"
-
     if (code >= 95) return "Trovoada"
 
     return "Condição desconhecida"
 }
-
 
 function Semana() {
 
@@ -50,7 +42,6 @@ function Semana() {
 
                 const data = await getWeather(city.latitude, city.longitude)
 
-
                 const dailyForecast = data.daily.time.map(
                     (date: string, index: number) => ({
 
@@ -70,17 +61,13 @@ function Semana() {
                     })
                 )
 
-
                 setDays(dailyForecast)
 
             } catch {
-
                 setError("Não foi possível carregar os dados do tempo.")
 
             } finally {
-
                 setLoading(false)
-
             }
 
         }
@@ -89,16 +76,13 @@ function Semana() {
 
     }, [city])
 
-
     if (loading) {
         return <p>Carregando...</p>
     }
 
-
     if (error) {
         return <p>{error}</p>
     }
-
 
     return (
 
@@ -111,7 +95,7 @@ function Semana() {
                 <section>
 
                     <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
-                        São Paulo
+                        {city?.name ?? 'Carregando localização...'}
                     </p>
 
                     <p className="mt-1 text-sm text-gray-500">
