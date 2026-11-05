@@ -113,7 +113,7 @@ function Hora() {
                 <section>
 
                     <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
-                        São Paulo
+                        {city?.name ?? 'Carregando localização...'}
                     </p>
 
                     <p className="mt-1 text-sm text-gray-500">

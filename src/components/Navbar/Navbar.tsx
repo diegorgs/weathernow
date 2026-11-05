@@ -99,7 +99,7 @@ function Navbar() {
             <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
                 <div className="flex items-center gap-3">
                     <a
-                        href="/"
+                        href="#clima"
                         className="flex items-center gap-2 text-sm font-semibold"
                         style={{ color: darkMode ? '#e2e8f0' : '#0f172a' }}
                     >
@@ -117,10 +117,10 @@ function Navbar() {
                     className="hidden items-center gap-6 text-sm md:flex"
                     style={{ color: darkMode ? '#cbd5e1' : '#475569' }}
                 >
-                    <a href="/" className="transition hover:text-sky-600">Clima</a>
-                    <a href="/Hora" className="transition hover:text-sky-600">Tempo</a>
-                    <a href="/Semana" className="transition hover:text-sky-600">Previsão</a>
-                    <a href="/Mapa" className="transition hover:text-sky-600">Calendário</a>
+                    <a href="#clima" className="transition hover:text-sky-600">Clima</a>
+                    <a href="#hora" className="transition hover:text-sky-600">Horário</a>
+                    <a href="#semana" className="transition hover:text-sky-600">Semanal</a>
+                    <a href="#mapa" className="transition hover:text-sky-600">Mapa</a>
                 </div>
 
                 <div className="relative flex items-center gap-3">
