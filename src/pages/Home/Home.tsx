@@ -502,18 +502,18 @@ function Home() {
                         </span>
                     </div>
 
-                    <div className="calendar-grid">
-                        {['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'].map((day) => (
-                            <div key={day} className="calendar-head">{day}</div>
-                        ))}
+                        <div className="calendar-grid">
+                            {['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'].map((day) => (
+                                <div key={day} className="calendar-head">{day}</div>
+                            ))}
 
-                        {calendar.map((item, index) => (
-                            <div key={`${item[1]}-${index}`} className={`calendar-day ${index === 2 ? 'active' : ''}`}>
-                                <div className="icon">{item[2]}</div>
-                                <div>{item[1]}</div>
-                                <div className="temp">{item[3]}</div>
-                            </div>
-                        ))}
+                            {calendar.map((item, index) => (
+                                <div key={`${item[1]}-${index}`} className={`calendar-day ${index === 2 ? 'active' : ''}`}>
+                                    <div className="icon">{item[2]}</div>
+                                    <div>{item[1]}</div>
+                                    <div className="temp">{item[3]}</div>
+                                </div>
+                            ))}
                     </div>
                 </section>
 
@@ -525,11 +525,11 @@ function Home() {
                 </section>
 
                 <div className="alert-row">
-                    <div className="alert-card primary">
-                        <div className="title">⚠️ Atenção moderada</div>
+                    <div className="alert-card bg-red-200">
+                        <div className="title">⚠️ Atenção Critica</div>
                         <div className="body">Possibilidade de temporal forte até 16h com rajadas de vento.</div>
                     </div>
-                    <div className="alert-card secondary">
+                    <div className="alert-card bg-yellow-100">
                         <div className="title">⚠️ Atenção moderada</div>
                         <div className="body">Risco de alagamento e queda de energia em algumas regiões.</div>
                     </div>
