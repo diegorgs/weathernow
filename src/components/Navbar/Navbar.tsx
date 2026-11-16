@@ -1,12 +1,21 @@
 ﻿import { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getCityCoordinates, getCitySuggestions } from '../../services/api'
 import { CityContext } from '../../context/city-context'
+
+type AuthUser = {
+    id: number
+    name: string
+    email: string
+}
 
 function Navbar() {
     const [searchOpen, setSearchOpen] = useState(false)
     const [city, setCity] = useState('')
     const [searchError, setSearchError] = useState('')
     const [suggestions, setSuggestions] = useState<any[]>([])
+    const [user, setUser] = useState<AuthUser | null>(null)
+    const [menuOpen, setMenuOpen] = useState(false)
     const [darkMode, setDarkMode] = useState<boolean>(() => {
         const savedTheme = localStorage.getItem('weather-now-theme')
 
@@ -18,11 +27,34 @@ function Navbar() {
     })
 
     const context = useContext(CityContext)
+    const navigate = useNavigate()
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light')
         localStorage.setItem('weather-now-theme', darkMode ? 'dark' : 'light')
     }, [darkMode])
+
+    useEffect(() => {
+        const syncUser = () => {
+            const storedUser = localStorage.getItem('weather_now_user')
+
+            if (!storedUser) {
+                setUser(null)
+                return
+            }
+
+            try {
+                setUser(JSON.parse(storedUser) as AuthUser)
+            } catch {
+                setUser(null)
+            }
+        }
+
+        syncUser()
+        window.addEventListener('storage', syncUser)
+
+        return () => window.removeEventListener('storage', syncUser)
+    }, [])
 
     useEffect(() => {
         const trimmedCity = city.trim()
@@ -58,11 +90,18 @@ function Navbar() {
             return
         }
 
-        context.setCity({
+        const nextCity = {
             name: result.name,
             latitude: result.latitude,
             longitude: result.longitude,
-        })
+        }
+
+        context.setCity(nextCity)
+
+        const history = JSON.parse(localStorage.getItem('weather_now_history') ?? '[]')
+        const filtered = history.filter((item: { name: string }) => item.name !== result.name)
+        filtered.unshift({ name: result.name, latitude: result.latitude, longitude: result.longitude })
+        localStorage.setItem('weather_now_history', JSON.stringify(filtered.slice(0, 6)))
 
         setSearchError('')
         setCity('')
@@ -81,10 +120,23 @@ function Navbar() {
             longitude: result.longitude,
         })
 
+        const history = JSON.parse(localStorage.getItem('weather_now_history') ?? '[]')
+        const filtered = history.filter((item: { name: string }) => item.name !== result.name)
+        filtered.unshift({ name: result.name, latitude: result.latitude, longitude: result.longitude })
+        localStorage.setItem('weather_now_history', JSON.stringify(filtered.slice(0, 6)))
+
         setCity('')
         setSuggestions([])
         setSearchError('')
         setSearchOpen(false)
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('weather_now_token')
+        localStorage.removeItem('weather_now_user')
+        setUser(null)
+        setMenuOpen(false)
+        navigate('/login')
     }
 
     return (
@@ -253,25 +305,70 @@ function Navbar() {
                         Buscar
                     </button>
 
-                    <button
-                        onMouseEnter={(event) => {
-                            event.currentTarget.style.background = '#0369a1'
-                            event.currentTarget.style.transform = 'translateY(-1px)'
-                            event.currentTarget.style.boxShadow = '0 10px 18px rgba(2, 132, 199, 0.28)'
-                        }}
-                        onMouseLeave={(event) => {
-                            event.currentTarget.style.background = '#0284c7'
-                            event.currentTarget.style.transform = 'translateY(0)'
-                            event.currentTarget.style.boxShadow = '0 0 0 rgba(0,0,0,0)'
-                        }}
-                        className="rounded-full px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-200"
-                        style={{
-                            background: '#0284c7',
-                            transition: 'all 0.2s ease',
-                        }}
-                    >
-                        Entrar
-                    </button>
+                    {user ? (
+                        <div className="user-menu-wrap">
+                            <button
+                                type="button"
+                                className="user-menu-button"
+                                onClick={() => setMenuOpen((current) => !current)}
+                            >
+                                <span className="user-avatar">👤</span>
+                                <span>{user.name.split(' ')[0]}</span>
+                                <span className="user-chevron">{menuOpen ? '▴' : '▾'}</span>
+                            </button>
+
+                            {menuOpen && (
+                                <div className="user-menu-dropdown">
+                                    <div className="user-menu-header">
+                                        <span className="user-avatar">👤</span>
+                                        <div>
+                                            <strong>{user.name}</strong>
+                                            <small>{user.email}</small>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="user-menu-item"
+                                        onClick={() => {
+                                            setMenuOpen(false)
+                                            navigate('/configuracoes')
+                                        }}
+                                    >
+                                        Configurações
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="user-menu-item danger"
+                                        onClick={handleLogout}
+                                    >
+                                        Sair
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={() => navigate('/login')}
+                            onMouseEnter={(event) => {
+                                event.currentTarget.style.background = '#0369a1'
+                                event.currentTarget.style.transform = 'translateY(-1px)'
+                                event.currentTarget.style.boxShadow = '0 10px 18px rgba(2, 132, 199, 0.28)'
+                            }}
+                            onMouseLeave={(event) => {
+                                event.currentTarget.style.background = '#0284c7'
+                                event.currentTarget.style.transform = 'translateY(0)'
+                                event.currentTarget.style.boxShadow = '0 0 0 rgba(0,0,0,0)'
+                            }}
+                            className="rounded-full px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-200"
+                            style={{
+                                background: '#0284c7',
+                                transition: 'all 0.2s ease',
+                            }}
+                        >
+                            Entrar
+                        </button>
+                    )}
                 </div>
             </nav>
         </header>
