@@ -126,11 +126,24 @@ function Navbar() {
                     <button
                         type="button"
                         onClick={() => setDarkMode((current) => !current)}
-                        className="rounded-full border px-3 py-2 text-xs font-semibold transition"
+                        onMouseEnter={(event) => {
+                            event.currentTarget.style.background = darkMode ? 'rgba(14, 116, 144, 0.22)' : '#e0f2fe'
+                            event.currentTarget.style.borderColor = darkMode ? 'rgba(56, 189, 248, 0.5)' : '#bae6fd'
+                            event.currentTarget.style.transform = 'translateY(-1px)'
+                            event.currentTarget.style.boxShadow = darkMode ? '0 8px 16px rgba(14, 165, 233, 0.18)' : '0 8px 16px rgba(14, 165, 233, 0.12)'
+                        }}
+                        onMouseLeave={(event) => {
+                            event.currentTarget.style.background = darkMode ? 'rgba(15, 23, 42, 0.8)' : '#f8fafc'
+                            event.currentTarget.style.borderColor = darkMode ? 'rgba(148,163,184,0.18)' : '#e2e8f0'
+                            event.currentTarget.style.transform = 'translateY(0)'
+                            event.currentTarget.style.boxShadow = 'none'
+                        }}
+                        className="rounded-full border px-3 py-2 text-xs font-semibold transition-all duration-200"
                         style={{
                             borderColor: darkMode ? 'rgba(148,163,184,0.18)' : '#e2e8f0',
                             background: darkMode ? 'rgba(15, 23, 42, 0.8)' : '#f8fafc',
                             color: darkMode ? '#e2e8f0' : '#0f172a',
+                            transition: 'all 0.2s ease',
                         }}
                         aria-label="Alternar tema"
                     >
@@ -181,10 +194,21 @@ function Navbar() {
                                             <button
                                                 type="button"
                                                 onClick={() => handleSuggestionClick(result)}
-                                                className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition"
+                                                onMouseEnter={(event) => {
+                                                    event.currentTarget.style.background = darkMode ? 'rgba(14, 116, 144, 0.18)' : '#f0f9ff'
+                                                    event.currentTarget.style.color = darkMode ? '#f8fafc' : '#0f172a'
+                                                    event.currentTarget.style.transform = 'translateX(2px)'
+                                                }}
+                                                onMouseLeave={(event) => {
+                                                    event.currentTarget.style.background = darkMode ? 'rgba(15, 23, 42, 0.9)' : '#ffffff'
+                                                    event.currentTarget.style.color = darkMode ? '#e2e8f0' : '#334155'
+                                                    event.currentTarget.style.transform = 'translateX(0)'
+                                                }}
+                                                className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-all duration-200"
                                                 style={{
                                                     color: darkMode ? '#e2e8f0' : '#334155',
                                                     background: darkMode ? 'rgba(15, 23, 42, 0.9)' : '#ffffff',
+                                                    transition: 'all 0.2s ease',
                                                 }}
                                             >
                                                 <span>{result.name}</span>
@@ -206,19 +230,45 @@ function Navbar() {
                     <button
                         type="button"
                         onClick={() => setSearchOpen(!searchOpen)}
-                        className="rounded-full border px-3 py-2 text-xs font-medium transition hover:border-sky-300 hover:text-sky-600"
+                        onMouseEnter={(event) => {
+                            event.currentTarget.style.borderColor = darkMode ? 'rgba(56, 189, 248, 0.65)' : '#bae6fd'
+                            event.currentTarget.style.background = darkMode ? 'rgba(14, 116, 144, 0.18)' : '#f0f9ff'
+                            event.currentTarget.style.color = '#0284c7'
+                            event.currentTarget.style.transform = 'translateY(-1px)'
+                        }}
+                        onMouseLeave={(event) => {
+                            event.currentTarget.style.borderColor = darkMode ? 'rgba(148,163,184,0.18)' : '#e2e8f0'
+                            event.currentTarget.style.background = darkMode ? 'rgba(15, 23, 42, 0.8)' : '#f8fafc'
+                            event.currentTarget.style.color = darkMode ? '#e2e8f0' : '#0f172a'
+                            event.currentTarget.style.transform = 'translateY(0)'
+                        }}
+                        className="rounded-full border px-3 py-2 text-xs font-medium transition-all duration-200"
                         style={{
                             borderColor: darkMode ? 'rgba(148,163,184,0.18)' : '#e2e8f0',
                             background: darkMode ? 'rgba(15, 23, 42, 0.8)' : '#f8fafc',
                             color: darkMode ? '#e2e8f0' : '#0f172a',
+                            transition: 'all 0.2s ease',
                         }}
                     >
                         Buscar
                     </button>
 
                     <button
-                        className="rounded-full px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-sky-700"
-                        style={{ background: '#0284c7' }}
+                        onMouseEnter={(event) => {
+                            event.currentTarget.style.background = '#0369a1'
+                            event.currentTarget.style.transform = 'translateY(-1px)'
+                            event.currentTarget.style.boxShadow = '0 10px 18px rgba(2, 132, 199, 0.28)'
+                        }}
+                        onMouseLeave={(event) => {
+                            event.currentTarget.style.background = '#0284c7'
+                            event.currentTarget.style.transform = 'translateY(0)'
+                            event.currentTarget.style.boxShadow = '0 0 0 rgba(0,0,0,0)'
+                        }}
+                        className="rounded-full px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-200"
+                        style={{
+                            background: '#0284c7',
+                            transition: 'all 0.2s ease',
+                        }}
                     >
                         Entrar
                     </button>
