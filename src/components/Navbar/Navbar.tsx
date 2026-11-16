@@ -1,23 +1,23 @@
 ﻿import { useContext, useEffect, useState } from 'react'
 import { getCityCoordinates, getCitySuggestions } from '../../services/api'
-import { CityContext } from '../../context/CityContext'
+import { CityContext } from '../../context/city-context'
 
 function Navbar() {
     const [searchOpen, setSearchOpen] = useState(false)
     const [city, setCity] = useState('')
     const [searchError, setSearchError] = useState('')
     const [suggestions, setSuggestions] = useState<any[]>([])
-    const [darkMode, setDarkMode] = useState(false)
+    const [darkMode, setDarkMode] = useState<boolean>(() => {
+        const savedTheme = localStorage.getItem('weather-now-theme')
+
+        if (savedTheme) {
+            return savedTheme === 'dark'
+        }
+
+        return window.matchMedia('(prefers-color-scheme: dark)').matches
+    })
 
     const context = useContext(CityContext)
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('weather-now-theme')
-        const initialDark = savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
-
-        setDarkMode(initialDark)
-        document.documentElement.setAttribute('data-theme', initialDark ? 'dark' : 'light')
-    }, [])
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light')
@@ -27,8 +27,7 @@ function Navbar() {
     useEffect(() => {
         const trimmedCity = city.trim()
 
-        if (!trimmedCity || trimmedCity.length < 2) {
-            setSuggestions([])
+        if (trimmedCity.length < 2) {
             return
         }
 

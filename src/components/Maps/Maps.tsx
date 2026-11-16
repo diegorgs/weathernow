@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { CityContext } from "../../context/CityContext";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { CityContext } from "../../context/city-context";
 import { getCityFromCoordinates } from "../../services/api";
 
 type Coordinates = {
@@ -20,7 +20,7 @@ export default function WindyMap() {
     : DEFAULT_POSITION;
   const [status, setStatus] = useState("Obtendo localização...");
 
-  const requestLocation = () => {
+  const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setStatus("Geolocalização não suportada no navegador.");
       return;
@@ -62,16 +62,17 @@ export default function WindyMap() {
         maximumAge: 60000,
       }
     );
-  };
+  }, [context]);
 
   useEffect(() => {
-    if (city) {
-      setStatus(`Exibindo ${city.name}`);
-      return;
+    if (!city) {
+      // A solicitação de geolocalização depende da permissão do navegador e precisa ser disparada no mount.
+      // oxlint-disable-next-line react/set-state-in-effect
+      requestLocation();
     }
+  }, [city, requestLocation]);
 
-    requestLocation();
-  }, [city]);
+  const displayStatus = city ? `Exibindo ${city.name}` : status;
 
   const mapUrl = new URL("https://embed.windy.com/embed2.html");
   mapUrl.searchParams.set("lat", position.lat.toString());
@@ -102,7 +103,7 @@ export default function WindyMap() {
           >
             Mapa meteorológico
           </h2>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{status}</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{displayStatus}</p>
         </div>
 
         <button

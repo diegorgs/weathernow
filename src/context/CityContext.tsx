@@ -1,18 +1,6 @@
-import { createContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { CityContext, type City } from './city-context'
 import { getCityFromCoordinates } from '../services/api'
-
-type City = {
-    name: string
-    latitude: number
-    longitude: number
-}
-
-type CityContextType = {
-    city: City | null
-    setCity: React.Dispatch<React.SetStateAction<City | null>>
-}
-
-export const CityContext = createContext<CityContextType | null>(null)
 
 const DEFAULT_CITY: City = {
     name: 'São Paulo',
@@ -21,11 +9,16 @@ const DEFAULT_CITY: City = {
 }
 
 export function CityProvider({ children }: { children: React.ReactNode }) {
-    const [city, setCity] = useState<City | null>(null)
+    const [city, setCity] = useState<City | null>(() => {
+        if (typeof navigator === 'undefined' || !navigator.geolocation) {
+            return DEFAULT_CITY
+        }
+
+        return null
+    })
 
     useEffect(() => {
-        if (!navigator.geolocation) {
-            setCity(DEFAULT_CITY)
+        if (typeof navigator === 'undefined' || !navigator.geolocation) {
             return
         }
 

@@ -1,7 +1,7 @@
 import Navbar from '../../components/Navbar/Navbar'
 import WindyMap from '../../components/Maps/Maps'
 import { useContext } from 'react'
-import { CityContext } from '../../context/CityContext'
+import { CityContext } from '../../context/city-context'
 
 function Maps() {
     const context = useContext(CityContext)
