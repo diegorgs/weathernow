@@ -5,7 +5,7 @@ import type { DailyForecast } from '../../types/weather'
 
 import { useContext, useEffect, useState } from 'react'
 import { getWeather } from '../../services/api'
-import { CityContext } from '../../context/CityContext'
+import { CityContext } from '../../context/city-context'
 
 function getWeatherCondition(code: number) {
     if (code === 0) return "Céu limpo"

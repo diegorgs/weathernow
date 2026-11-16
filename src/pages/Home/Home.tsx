@@ -7,7 +7,7 @@ import type { HoursForecast } from '../../types/weather'
 import { useEffect, useState } from 'react'
 import { getWeather } from '../../services/api'
 import { useContext } from 'react'
-import { CityContext } from '../../context/CityContext'
+import { CityContext } from '../../context/city-context'
 
 type HourMetric = {
     hour: string
