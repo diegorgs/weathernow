@@ -8,8 +8,8 @@ type Coordinates = {
 };
 
 const DEFAULT_POSITION: Coordinates = {
-  lat: -23.55,
-  lon: -46.63,
+  lat: -23.18,
+  lon: -45.88,
 };
 
 export default function WindyMap() {
@@ -50,11 +50,11 @@ export default function WindyMap() {
       },
       () => {
         context?.setCity({
-          name: "São Paulo",
+          name: "São José dos Campos",
           latitude: DEFAULT_POSITION.lat,
           longitude: DEFAULT_POSITION.lon,
         });
-        setStatus("Permissão de localização bloqueada. Exibindo São Paulo.");
+        setStatus("Permissão de localização bloqueada. Exibindo São José dos Campos.");
       },
       {
         enableHighAccuracy: true,

@@ -141,7 +141,7 @@ function Navbar() {
 
     return (
         <header
-            className="border-b backdrop-blur-sm"
+            className="sticky top-0 z-50 border-b backdrop-blur-sm"
             style={{
                 borderColor: darkMode ? 'rgba(148, 163, 184, 0.14)' : '#e2e8f0',
                 background: darkMode ? 'rgba(15, 23, 42, 0.76)' : 'rgba(255, 255, 255, 0.8)',
@@ -172,6 +172,7 @@ function Navbar() {
                     <a href="#hora" className="transition hover:text-sky-600">Horário</a>
                     <a href="#semana" className="transition hover:text-sky-600">Semanal</a>
                     <a href="#mapa" className="transition hover:text-sky-600">Mapa</a>
+                    <a href="#noticias" className="transition hover:text-sky-600">Notícias</a>
                 </div>
 
                 <div className="relative flex items-center gap-3">

@@ -3,6 +3,7 @@ import WeatherCard from '../../components/WeatherCard/WeatherCard'
 import WeatherStats from '../../components/WeatherStats/WeatherStats'
 import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
 import WindyMap from '../../components/Maps/Maps'
+import NewsList from '../../components/NewsList/NewsList'
 import type { HoursForecast } from '../../types/weather'
 import { useEffect, useState } from 'react'
 import { getWeather } from '../../services/api'
@@ -309,7 +310,7 @@ function Home() {
                 <main className="weather-shell">
                     <div className="top-header loading-header">
                         <div className="header-city loading-header-city">
-                            <span className="eyebrow">Capital</span>
+                            <span className="eyebrow">Cidade</span>
                             <span className="loading-title loading-shimmer" />
                             <span className="loading-date loading-shimmer" />
                         </div>
@@ -361,8 +362,8 @@ function Home() {
             <main className="weather-shell">
                 <div className="top-header">
                     <div className="header-city">
-                        <span className="eyebrow">Capital</span>
-                        <h1>{city?.name ?? 'São Paulo'}</h1>
+                        <span className="eyebrow">Cidade</span>
+                        <h1>{city?.name ?? 'São José dos Campos'}</h1>
                         <span className="header-date">{selectedDateLabel}</span>
                     </div>
 
@@ -376,7 +377,7 @@ function Home() {
                     )}
 
                     <div className="header-meta">
-                        <span>{city?.name ?? 'São Paulo'}</span>
+                        <span>{city?.name ?? 'São José dos Campos'}</span>
                         <span>Atualizado há 8 min</span>
                     </div>
                 </div>
@@ -545,6 +546,8 @@ function Home() {
 
                     <WindyMap />
                 </section>
+
+                <NewsList />
 
                 <section className="section-box" style={{ marginTop: '20px' }}>
                     <div className="section-head">

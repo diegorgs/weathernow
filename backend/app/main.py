@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.auth import create_access_token, get_current_user, hash_password, verify_password
 from app.database import Base, engine, get_db
 from app.models import User, UserCityHistory, UserPreference
+from app.news import router as news_router
 from app.schemas import (
     Token,
     UserCityHistoryCreate,
@@ -27,6 +28,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(news_router)
 
 
 @app.get("/health")

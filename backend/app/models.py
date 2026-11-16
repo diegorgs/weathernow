@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -46,3 +46,12 @@ class UserPreference(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User", back_populates="preferences")
+
+
+class NewsCache(Base):
+    __tablename__ = "news_cache"
+
+    id = Column(Integer, primary_key=True, index=True)
+    query_key = Column(String(120), unique=True, index=True, nullable=False)
+    payload = Column(Text, nullable=False)
+    fetched_at = Column(DateTime, default=datetime.utcnow, nullable=False)

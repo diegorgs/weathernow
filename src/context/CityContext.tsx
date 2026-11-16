@@ -3,9 +3,9 @@ import { CityContext, type City } from './city-context'
 import { getCityFromCoordinates } from '../services/api'
 
 const DEFAULT_CITY: City = {
-    name: 'São Paulo',
-    latitude: -23.55,
-    longitude: -46.63,
+    name: 'São José dos Campos',
+    latitude: -23.18,
+    longitude: -45.88,
 }
 
 export function CityProvider({ children }: { children: React.ReactNode }) {

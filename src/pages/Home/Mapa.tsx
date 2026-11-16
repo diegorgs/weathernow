@@ -5,7 +5,7 @@ import { CityContext } from '../../context/city-context'
 
 function Maps() {
     const context = useContext(CityContext)
-    const cityName = context?.city?.name ?? 'São Paulo'
+    const cityName = context?.city?.name ?? 'São José dos Campos'
 
     return (
         <div className="min-h-screen bg-slate-50">
