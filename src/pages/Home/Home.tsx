@@ -289,6 +289,19 @@ function Home() {
         ['Dom', '7', '☁️', '24°'],
     ]
 
+    const hasCivilDefenseAlert =
+        windSpeed >= 45 ||
+        rainProbability >= 75 ||
+        condition.toLowerCase().includes('trovoada') ||
+        (condition.toLowerCase().includes('chuva') && rainProbability >= 60)
+
+    const civilDefenseMessage =
+        windSpeed >= 45
+            ? 'Risco de rajadas fortes e queda de árvores. Siga as orientações da defesa civil.'
+            : condition.toLowerCase().includes('trovoada')
+                ? 'Há possibilidade de trovoadas e descargas elétricas na região.'
+                : 'Possibilidade de temporal forte com chuvas intensas e risco de alagamentos.'
+
     if (loading) {
         return (
             <div className="weather-page">
@@ -352,6 +365,15 @@ function Home() {
                         <h1>{city?.name ?? 'São Paulo'}</h1>
                         <span className="header-date">{selectedDateLabel}</span>
                     </div>
+
+                    {hasCivilDefenseAlert && (
+                        <div className="alert-row top-alert-row">
+                            <div className="alert-card text-center bg-red-200">
+                                <div className="title">⚠️ Atenção crítica</div>
+                                <div className="body">{civilDefenseMessage}</div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="header-meta">
                         <span>{city?.name ?? 'São Paulo'}</span>
@@ -523,21 +545,6 @@ function Home() {
 
                     <WindyMap />
                 </section>
-
-                <div className="alert-row">
-                    <div className="alert-card bg-red-200">
-                        <div className="title">⚠️ Atenção Critica</div>
-                        <div className="body">Possibilidade de temporal forte até 16h com rajadas de vento.</div>
-                    </div>
-                    <div className="alert-card bg-yellow-100">
-                        <div className="title">⚠️ Atenção moderada</div>
-                        <div className="body">Risco de alagamento e queda de energia em algumas regiões.</div>
-                    </div>
-                    <div className="alert-card success">
-                        <div className="title">✅ Sem riscos</div>
-                        <div className="body">Clima estável durante a noite com temperaturas amenas.</div>
-                    </div>
-                </div>
 
                 <section className="section-box" style={{ marginTop: '20px' }}>
                     <div className="section-head">
