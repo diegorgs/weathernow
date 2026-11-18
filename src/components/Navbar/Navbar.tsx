@@ -28,7 +28,38 @@ function Navbar() {
     })
 
     const inputWrapRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
     const [dropPos, setDropPos] = useState<{top:number;left:number;width:number}|null>(null)
+
+    // Bloqueia scroll-to-focused do browser enquanto o input da navbar está em foco
+    useEffect(() => {
+        const input = inputRef.current
+        if (!input) return
+        let locked = false
+        let savedY = 0
+
+        function onFocus() {
+            locked = true
+            savedY = window.scrollY
+        }
+        function onBlur() {
+            locked = false
+        }
+        function onScroll() {
+            if (locked) {
+                window.scrollTo({ top: savedY, behavior: 'instant' })
+            }
+        }
+
+        input.addEventListener('focus', onFocus)
+        input.addEventListener('blur', onBlur)
+        window.addEventListener('scroll', onScroll, { passive: false })
+        return () => {
+            input.removeEventListener('focus', onFocus)
+            input.removeEventListener('blur', onBlur)
+            window.removeEventListener('scroll', onScroll)
+        }
+    }, [])
 
     const context = useContext(CityContext)
     const navigate = useNavigate()
@@ -229,18 +260,13 @@ function Navbar() {
                                 }}
                             >
                                 <input
+                                    ref={inputRef}
                                     type="text"
                                     placeholder="Buscar cidade, país ou região"
                                     value={city}
                                     onChange={(event) => {
-                                        const before = window.scrollY
                                         setCity(event.target.value)
                                         if (searchError) setSearchError('')
-                                        setTimeout(() => {
-                                            if (window.scrollY !== before) {
-                                                console.trace('SCROLL MUDOU: ' + before + ' -> ' + window.scrollY)
-                                            }
-                                        }, 50)
                                     }}
                                     className="w-52 bg-transparent text-sm outline-none md:w-64"
                                     style={{
