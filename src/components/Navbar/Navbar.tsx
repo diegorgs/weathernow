@@ -35,35 +35,39 @@ function Navbar() {
     useEffect(() => {
         const input = inputRef.current
         if (!input) return
-        let locked = false
+        let focused = false
+        let userScrolling = false
         let savedY = 0
 
         function onFocus() {
-            locked = true
+            focused = true
             savedY = window.scrollY
         }
         function onBlur() {
-            locked = false
+            focused = false
         }
+        // Marca que o usuário iniciou o scroll com wheel/touch
+        function onWheel() { userScrolling = true }
+        function onTouchStart() { userScrolling = true }
         function onScroll() {
-            if (locked) {
-                const diff = Math.abs(window.scrollY - savedY)
-                if (diff < 60) {
-                    // Scroll pequeno = automático do browser, bloqueia
-                    window.scrollTo({ top: savedY, behavior: 'instant' })
-                } else {
-                    // Scroll grande = usuário rolou, atualiza referência
-                    savedY = window.scrollY
-                }
+            if (focused && !userScrolling) {
+                window.scrollTo({ top: savedY, behavior: 'instant' })
+            } else {
+                savedY = window.scrollY
+                userScrolling = false
             }
         }
 
         input.addEventListener('focus', onFocus)
         input.addEventListener('blur', onBlur)
-        window.addEventListener('scroll', onScroll, { passive: false })
+        window.addEventListener('wheel', onWheel, { passive: true })
+        window.addEventListener('touchstart', onTouchStart, { passive: true })
+        window.addEventListener('scroll', onScroll, { passive: true })
         return () => {
             input.removeEventListener('focus', onFocus)
             input.removeEventListener('blur', onBlur)
+            window.removeEventListener('wheel', onWheel)
+            window.removeEventListener('touchstart', onTouchStart)
             window.removeEventListener('scroll', onScroll)
         }
     }, [])
