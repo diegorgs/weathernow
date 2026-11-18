@@ -148,7 +148,7 @@ function Navbar() {
 
     return (
         <header
-            className="sticky top-0 z-50 border-b backdrop-blur-sm"
+            className="fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-sm"
             style={{
                 borderColor: darkMode ? 'rgba(148, 163, 184, 0.14)' : '#e2e8f0',
                 background: darkMode ? 'rgba(15, 23, 42, 0.76)' : 'rgba(255, 255, 255, 0.8)',
