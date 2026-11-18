@@ -67,11 +67,15 @@ function Navbar() {
         const timeout = setTimeout(async () => {
             try {
                 const results = await getCitySuggestions(trimmedCity)
-                // Preserva a posição de scroll ao atualizar sugestões
                 const scrollY = window.scrollY
+                // Desativa scroll-behavior temporariamente para evitar scroll automático
+                document.documentElement.style.scrollBehavior = 'auto'
                 setSuggestions(results)
                 requestAnimationFrame(() => {
-                    window.scrollTo({ top: scrollY, behavior: 'instant' })
+                    window.scrollTo(0, scrollY)
+                    requestAnimationFrame(() => {
+                        document.documentElement.style.scrollBehavior = ''
+                    })
                 })
             } catch {
                 setSuggestions([])
@@ -234,8 +238,16 @@ function Navbar() {
                                     placeholder="Buscar cidade, país ou região"
                                     value={city}
                                     onChange={(event) => {
+                                        const scrollY = window.scrollY
+                                        document.documentElement.style.scrollBehavior = 'auto'
                                         setCity(event.target.value)
                                         if (searchError) setSearchError('')
+                                        requestAnimationFrame(() => {
+                                            window.scrollTo(0, scrollY)
+                                            requestAnimationFrame(() => {
+                                                document.documentElement.style.scrollBehavior = ''
+                                            })
+                                        })
                                     }}
                                     className="w-52 bg-transparent text-sm outline-none md:w-64"
                                     style={{
