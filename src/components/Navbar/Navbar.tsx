@@ -155,10 +155,11 @@ function Navbar() {
         >
             <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
                 <div className="flex items-center gap-3">
-                    <a
-                        href="#clima"
+                    <button
+                        type="button"
+                        onClick={() => document.getElementById('clima')?.scrollIntoView({ behavior: 'smooth' })}
                         className="flex items-center gap-2 text-sm font-semibold"
-                        style={{ color: darkMode ? '#e2e8f0' : '#0f172a' }}
+                        style={{ color: darkMode ? '#e2e8f0' : '#0f172a', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                     >
                         <span
                             className="flex h-9 w-9 items-center justify-center rounded-full text-lg shadow-sm"
@@ -167,18 +168,22 @@ function Navbar() {
                             ☀️
                         </span>
                         <span>Weather Now</span>
-                    </a>
+                    </button>
                 </div>
 
                 <div
                     className="hidden items-center gap-6 text-sm md:flex"
                     style={{ color: darkMode ? '#cbd5e1' : '#475569' }}
                 >
-                    <a href="#clima" className="transition hover:text-sky-600">Clima</a>
-                    <a href="#hora" className="transition hover:text-sky-600">Horário</a>
-                    <a href="#semana" className="transition hover:text-sky-600">Semanal</a>
-                    <a href="#mapa" className="transition hover:text-sky-600">Mapa</a>
-                    <a href="#noticias" className="transition hover:text-sky-600">Notícias</a>
+                    {['clima','hora','semana','mapa','noticias'].map((id, i) => (
+                        <button key={id} type="button"
+                            onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })}
+                            className="transition hover:text-sky-600"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit', color: 'inherit' }}
+                        >
+                            {['Clima','Horário','Semanal','Mapa','Notícias'][i]}
+                        </button>
+                    ))}
                 </div>
 
                 <div className="relative flex items-center gap-3">
