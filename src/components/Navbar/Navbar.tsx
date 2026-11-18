@@ -233,8 +233,14 @@ function Navbar() {
                                     placeholder="Buscar cidade, país ou região"
                                     value={city}
                                     onChange={(event) => {
+                                        const before = window.scrollY
                                         setCity(event.target.value)
                                         if (searchError) setSearchError('')
+                                        setTimeout(() => {
+                                            if (window.scrollY !== before) {
+                                                console.trace('SCROLL MUDOU: ' + before + ' -> ' + window.scrollY)
+                                            }
+                                        }, 50)
                                     }}
                                     className="w-52 bg-transparent text-sm outline-none md:w-64"
                                     style={{
