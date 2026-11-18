@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getCityCoordinates, getCitySuggestions } from '../../services/api'
 import { CityContext } from '../../context/city-context'
@@ -25,9 +25,6 @@ function Navbar() {
 
         return window.matchMedia('(prefers-color-scheme: dark)').matches
     })
-
-    const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number } | null>(null)
-    const searchContainerRef = useRef<HTMLDivElement>(null)
 
     const context = useContext(CityContext)
     const navigate = useNavigate()
@@ -63,13 +60,19 @@ function Navbar() {
         const trimmedCity = city.trim()
 
         if (trimmedCity.length < 2) {
+            setSuggestions([])
             return
         }
 
         const timeout = setTimeout(async () => {
             try {
                 const results = await getCitySuggestions(trimmedCity)
+                // Preserva a posição de scroll ao atualizar sugestões
+                const scrollY = window.scrollY
                 setSuggestions(results)
+                requestAnimationFrame(() => {
+                    window.scrollTo({ top: scrollY, behavior: 'instant' })
+                })
             } catch {
                 setSuggestions([])
             }
@@ -77,15 +80,6 @@ function Navbar() {
 
         return () => clearTimeout(timeout)
     }, [city])
-
-    useEffect(() => {
-        if (suggestions.length > 0 && searchContainerRef.current) {
-            const rect = searchContainerRef.current.getBoundingClientRect()
-            setDropdownPos({ top: rect.bottom + 8, left: rect.left, width: rect.width })
-        } else {
-            setDropdownPos(null)
-        }
-    }, [suggestions])
 
     async function searchCity() {
         const query = city.trim()
@@ -222,7 +216,7 @@ function Navbar() {
                             searchCity()
                         }}
                     >
-                        <div className="relative" ref={searchContainerRef}>
+                        <div className="relative">
                             <div
                                 className="flex items-center gap-2 rounded-full border px-3 py-2"
                                 style={{
@@ -245,18 +239,11 @@ function Navbar() {
                                 />
                             </div>
 
-                            {suggestions.length > 0 && dropdownPos && React.createPortal(
+                            {suggestions.length > 0 && (
                                 <ul
+                                    className="absolute left-0 top-full z-20 mt-2 w-full min-w-[240px] overflow-hidden rounded-2xl border shadow-xl"
                                     style={{
-                                        position: 'fixed',
-                                        top: dropdownPos.top,
-                                        left: dropdownPos.left,
-                                        width: dropdownPos.width,
-                                        minWidth: 240,
-                                        zIndex: 9999,
-                                        borderRadius: '1rem',
-                                        overflow: 'hidden',
-                                        border: `1px solid ${darkMode ? 'rgba(148,163,184,0.18)' : '#e2e8f0'}`,
+                                        borderColor: darkMode ? 'rgba(148,163,184,0.18)' : '#e2e8f0',
                                         background: darkMode ? '#0f172a' : '#ffffff',
                                         boxShadow: darkMode ? '0 8px 24px rgba(2, 6, 23, 0.45)' : '0 8px 24px rgba(15, 23, 42, 0.08)',
                                     }}
@@ -290,8 +277,7 @@ function Navbar() {
                                             </button>
                                         </li>
                                     ))}
-                                </ul>,
-                                document.body
+                                </ul>
                             )}
                         </div>
 
