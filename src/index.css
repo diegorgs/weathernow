@@ -262,6 +262,11 @@ html {
   scroll-padding-top: 84px;
 }
 
+/* Impede scroll-anchor compensation na navbar sticky */
+header[class*="sticky"] {
+  overflow-anchor: none;
+}
+
 body {
   margin: 0;
   min-width: 320px;

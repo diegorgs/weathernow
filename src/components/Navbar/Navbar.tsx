@@ -28,49 +28,9 @@ function Navbar() {
     })
 
     const inputWrapRef = useRef<HTMLDivElement>(null)
-    const inputRef = useRef<HTMLInputElement>(null)
     const [dropPos, setDropPos] = useState<{top:number;left:number;width:number}|null>(null)
 
-    // Bloqueia scroll-to-focused do browser enquanto o input da navbar está em foco
-    useEffect(() => {
-        const input = inputRef.current
-        if (!input) return
-        let focused = false
-        let userScrolling = false
-        let savedY = 0
 
-        function onFocus() {
-            focused = true
-            savedY = window.scrollY
-        }
-        function onBlur() {
-            focused = false
-        }
-        // Marca que o usuário iniciou o scroll com wheel/touch
-        function onWheel() { userScrolling = true }
-        function onTouchStart() { userScrolling = true }
-        function onScroll() {
-            if (focused && !userScrolling) {
-                window.scrollTo({ top: savedY, behavior: 'instant' })
-            } else {
-                savedY = window.scrollY
-                userScrolling = false
-            }
-        }
-
-        input.addEventListener('focus', onFocus)
-        input.addEventListener('blur', onBlur)
-        window.addEventListener('wheel', onWheel, { passive: true })
-        window.addEventListener('touchstart', onTouchStart, { passive: true })
-        window.addEventListener('scroll', onScroll, { passive: true })
-        return () => {
-            input.removeEventListener('focus', onFocus)
-            input.removeEventListener('blur', onBlur)
-            window.removeEventListener('wheel', onWheel)
-            window.removeEventListener('touchstart', onTouchStart)
-            window.removeEventListener('scroll', onScroll)
-        }
-    }, [])
 
     const context = useContext(CityContext)
     const navigate = useNavigate()
@@ -271,7 +231,6 @@ function Navbar() {
                                 }}
                             >
                                 <input
-                                    ref={inputRef}
                                     type="text"
                                     placeholder="Buscar cidade, país ou região"
                                     value={city}
@@ -282,6 +241,7 @@ function Navbar() {
                                     className="w-52 bg-transparent text-sm outline-none md:w-64"
                                     style={{
                                         color: darkMode ? '#e2e8f0' : '#0f172a',
+                                        overflowAnchor: 'none',
                                     }}
                                 />
                             </div>
