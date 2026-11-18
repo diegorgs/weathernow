@@ -258,7 +258,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; — removido: causava scroll indesejado ao digitar na navbar */
   scroll-padding-top: 84px;
 }
 

@@ -60,31 +60,14 @@ function Navbar() {
         const trimmedCity = city.trim()
 
         if (trimmedCity.length < 2) {
-            const scrollY = window.scrollY
-            document.documentElement.style.scrollBehavior = 'auto'
             setSuggestions([])
-            requestAnimationFrame(() => {
-                window.scrollTo(0, scrollY)
-                requestAnimationFrame(() => {
-                    document.documentElement.style.scrollBehavior = ''
-                })
-            })
             return
         }
 
         const timeout = setTimeout(async () => {
             try {
                 const results = await getCitySuggestions(trimmedCity)
-                const scrollY = window.scrollY
-                // Desativa scroll-behavior temporariamente para evitar scroll automático
-                document.documentElement.style.scrollBehavior = 'auto'
                 setSuggestions(results)
-                requestAnimationFrame(() => {
-                    window.scrollTo(0, scrollY)
-                    requestAnimationFrame(() => {
-                        document.documentElement.style.scrollBehavior = ''
-                    })
-                })
             } catch {
                 setSuggestions([])
             }
@@ -246,16 +229,8 @@ function Navbar() {
                                     placeholder="Buscar cidade, país ou região"
                                     value={city}
                                     onChange={(event) => {
-                                        const scrollY = window.scrollY
-                                        document.documentElement.style.scrollBehavior = 'auto'
                                         setCity(event.target.value)
                                         if (searchError) setSearchError('')
-                                        requestAnimationFrame(() => {
-                                            window.scrollTo(0, scrollY)
-                                            requestAnimationFrame(() => {
-                                                document.documentElement.style.scrollBehavior = ''
-                                            })
-                                        })
                                     }}
                                     className="w-52 bg-transparent text-sm outline-none md:w-64"
                                     style={{
