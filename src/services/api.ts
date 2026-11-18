@@ -99,8 +99,25 @@ function normalizarTexto(texto: string) {
     return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 }
 
+// Expressões metafóricas que NÃO são notícias de clima (ex: "chuva de elogios")
+const CHUVA_METAFORICA = /chuva de (elogios|aplausos|likes|comentarios|criticas|presentes|gols|beijos|flores|felicitacoes|mensagens|pedidos|seguidores|amor|propostas|reacoes|memes)/
+
+// Assuntos que NÃO são clima mesmo que mencionem chuva/vento/etc como contexto
+// Ex: acidente, morte, crime, celebridade — chuva é cenário, não o assunto
+const TITULO_NAO_CLIMA = /\b(morre[um]?|morte|falece|obito|acidente|capotamento|colisao|batida|atropel\w+|assassin\w+|homicidio|crime|preso|presa|detido|detida|influenciador\w*|celebridade|cantor\w*|atriz|ator|jogador\w*|politico\w*|vereador\w*|deputad\w+|senator\w*|presidente|eleicao|eleicoes|escandalo|traicao|divorcio|casamento|gravidez|nasceu|nascimento|cirurgia|hospital|internado|internada|biquini|moda|desfile|premiacao|oscar|grammy|bbb|big brother)\b/
+
 function ehNoticiaDeTempo(artigo: NewsArticle) {
-    return PALAVRAS_TEMPO.test(normalizarTexto(`${artigo.title} ${artigo.description}`))
+    const titulo = normalizarTexto(artigo.title)
+    const textoCompleto = normalizarTexto(`${artigo.title} ${artigo.description}`)
+
+    // Rejeitar usos metafóricos de "chuva"
+    if (CHUVA_METAFORICA.test(textoCompleto)) return false
+
+    // Se o título é claramente sobre outro assunto (acidente, celebridade, crime etc),
+    // rejeitar mesmo que descrição mencione chuva como contexto
+    if (TITULO_NAO_CLIMA.test(titulo) && !PALAVRAS_TEMPO.test(titulo)) return false
+
+    return PALAVRAS_TEMPO.test(textoCompleto)
 }
 
 function removerRepetidas(artigos: NewsArticle[]) {
@@ -128,7 +145,7 @@ function readNewsCache(key: string): NewsCache | null {
 }
 
 export async function getClimateNews(cidade?: string): Promise<NewsArticle[]> {
-    const cacheKey = `weather-now-news-v2-${(cidade ?? 'brasil').toLowerCase()}`
+    const cacheKey = `weather-now-news-v4-${(cidade ?? 'brasil').toLowerCase()}`
     const cache = readNewsCache(cacheKey)
 
     if (cache && Date.now() - cache.savedAt < NEWS_CACHE_MINUTES * 60 * 1000) {

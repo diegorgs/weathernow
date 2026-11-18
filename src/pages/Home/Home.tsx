@@ -4,6 +4,7 @@ import WeatherStats from '../../components/WeatherStats/WeatherStats'
 import HourlyForecast from '../../components/HourlyForecast/HourlyForecast'
 import WindyMap from '../../components/Maps/Maps'
 import NewsList from '../../components/NewsList/NewsList'
+import FavoriteCities from '../../components/FavoriteCities/FavoriteCities'
 import type { HoursForecast } from '../../types/weather'
 import { useEffect, useState } from 'react'
 import { getWeather } from '../../services/api'
@@ -213,14 +214,16 @@ function Home() {
         setHourlyMetrics(nextHours)
     }
 
+    const BASE_ICONS = 'https://cdn.jsdelivr.net/npm/@bybas/weather-icons@2.0.0/production/fill/all'
+
     const metricDisplay = selectedMetric
         ? {
-            temperature: { label: 'Temperatura', value: `${temperature}°C`, icon: '🌡️' },
-            humidity: { label: 'Umidade', value: `${humidity}%`, icon: '💧' },
-            wind: { label: 'Vento', value: `${windSpeed} km/h`, icon: '💨' },
-            rain: { label: 'Chance de chuva', value: `${rainProbability}%`, icon: '🌧️' },
-            visibility: { label: 'Visibilidade', value: `${visibility} km`, icon: '👁️' },
-            uv: { label: 'UV', value: `${uvIndex} UV`, icon: '☀️' },
+            temperature: { label: 'Temperatura', value: `${temperature}°C`, icon: `${BASE_ICONS}/thermometer.svg` },
+            humidity:    { label: 'Umidade',      value: `${humidity}%`,     icon: `${BASE_ICONS}/humidity.svg` },
+            wind:        { label: 'Vento',        value: `${windSpeed} km/h`,icon: `${BASE_ICONS}/wind.svg` },
+            rain:        { label: 'Chance de chuva', value: `${rainProbability}%`, icon: `${BASE_ICONS}/rain.svg` },
+            visibility:  { label: 'Visibilidade', value: `${visibility} km`, icon: `${BASE_ICONS}/mist.svg` },
+            uv:          { label: 'UV',           value: `${uvIndex} UV`,    icon: `${BASE_ICONS}/uv-index.svg` },
         }[selectedMetric]
         : null
 
@@ -518,28 +521,6 @@ function Home() {
                     </div>
                 </section>
 
-                <section className="section-box">
-                    <div className="section-head">
-                        <h3>Vamos tirar isso!</h3>
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}> 2026
-                        </span>
-                    </div>
-
-                        <div className="calendar-grid">
-                            {['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'].map((day) => (
-                                <div key={day} className="calendar-head">{day}</div>
-                            ))}
-
-                            {calendar.map((item, index) => (
-                                <div key={`${item[1]}-${index}`} className={`calendar-day ${index === 2 ? 'active' : ''}`}>
-                                    <div className="icon">{item[2]}</div>
-                                    <div>{item[1]}</div>
-                                    <div className="temp">{item[3]}</div>
-                                </div>
-                            ))}
-                    </div>
-                </section>
-
                 <section className="section-box scroll-mt-6.5" id="mapa">
                     <div className="section-head">
                     </div>
@@ -549,38 +530,7 @@ function Home() {
 
                 <NewsList />
 
-                <section className="section-box" style={{ marginTop: '20px' }}>
-                    <div className="section-head">
-                        <h3>Meus locais</h3>
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>+ Adicionar cidade</span>
-                    </div>
-
-                    <div className="favorites-row">
-                        <div className="favorite-card">
-                            <div>
-                                <div className="name">São Paulo</div>
-                                <div className="temp">24°</div>
-                            </div>
-                            <div className="fake-icon">☁️</div>
-                        </div>
-
-                        <div className="favorite-card">
-                            <div>
-                                <div className="name">Rio</div>
-                                <div className="temp">28°</div>
-                            </div>
-                            <div className="fake-icon">☀️</div>
-                        </div>
-
-                        <div className="favorite-card">
-                            <div>
-                                <div className="name">Curitiba</div>
-                                <div className="temp">21°</div>
-                            </div>
-                            <div className="fake-icon">🌧️</div>
-                        </div>
-                    </div>
-                </section>
+                <FavoriteCities />
             </main>
         </div>
     )

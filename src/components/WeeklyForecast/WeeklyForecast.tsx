@@ -1,31 +1,8 @@
 import type { DailyForecast } from '../../types/weather'
+import { getWeatherIconUrl } from '../../utils/weatherIcons'
 
 type WeeklyForecastProps = {
     days: DailyForecast[]
-}
-
-const weekIcons: Record<string, { day: string; night: string }> = {
-    'ceu limpo': { day: '☀️', night: '🌙' },
-    'principalmente limpo': { day: '🌤️', night: '🌙' },
-    'parcialmente nublado': { day: '⛅', night: '☁️' },
-    nublado: { day: '☁️', night: '☁️' },
-    chuva: { day: '🌧️', night: '🌧️' },
-    'pancadas de chuva': { day: '🌦️', night: '🌧️' },
-}
-
-function normalizeCondition(condition: string) {
-    return condition
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .trim()
-}
-
-function getWeekNightAwareIcon(condition: string) {
-    const hour = new Date().getHours()
-    const isNight = hour >= 18 || hour <= 5
-    const variant = weekIcons[normalizeCondition(condition)] ?? { day: '☀️', night: '🌙' }
-    return isNight ? variant.night : variant.day
 }
 
 function WeeklyForecast({ days }: WeeklyForecastProps) {
@@ -39,6 +16,9 @@ function WeeklyForecast({ days }: WeeklyForecastProps) {
         { day: 'Domingo', min: 18, max: 24, condition: 'chuva' },
     ]
 
+    // Previsão semanal sempre usa horário diurno (12h)
+    const DAYTIME_HOUR = 12
+
     return (
         <div className="week-list">
             {data.map((day) => (
@@ -46,7 +26,13 @@ function WeeklyForecast({ days }: WeeklyForecastProps) {
                     <div className="day">{day.day}</div>
                     <div className="rain">{Math.round((day.min + day.max) / 2) >= 24 ? '30% chance de chuva' : '15% chance de chuva'}</div>
                     <div className="temps">
-                        <span>{getWeekNightAwareIcon(day.condition)}</span>
+                        <img
+                            src={getWeatherIconUrl(day.condition, DAYTIME_HOUR)}
+                            alt={day.condition}
+                            className="week-icon-svg"
+                            width={28}
+                            height={28}
+                        />
                         <span style={{ marginLeft: '10px' }}>{day.min}° / {day.max}°</span>
                     </div>
                 </div>

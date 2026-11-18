@@ -1,4 +1,5 @@
 import type { HoursForecast } from '../../types/weather'
+import { getWeatherIconUrl } from '../../utils/weatherIcons'
 
 type HoursForecastProps = {
     hours: HoursForecast[]
@@ -6,33 +7,9 @@ type HoursForecastProps = {
     onHourSelect?: (hour: HoursForecast, index: number) => void
 }
 
-const quickIcons: Record<string, { day: string; night: string }> = {
-    claro: { day: '☀️', night: '🌙' },
-    'ceu limpo': { day: '☀️', night: '🌙' },
-    'principalmente limpo': { day: '🌤️', night: '🌙' },
-    'parcialmente nublado': { day: '⛅', night: '☁️' },
-    nublado: { day: '☁️', night: '☁️' },
-    chuva: { day: '🌧️', night: '🌧️' },
-    'pancadas de chuva': { day: '🌦️', night: '🌧️' },
-    trovoada: { day: '⛈️', night: '⛈️' },
-    neblina: { day: '🌫️', night: '🌫️' },
-    neve: { day: '❄️', night: '❄️' },
-}
-
-function normalizeCondition(condition: string) {
-    return condition
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .trim()
-}
-
-function getNightAwareIcon(condition: string, label: string) {
+function getHourNumber(label: string): number {
     const match = label.match(/(\d{1,2})/)
-    const hour = match ? Number(match[1]) : new Date().getHours()
-    const isNight = hour >= 18 || hour <= 5
-    const variant = quickIcons[normalizeCondition(condition)] ?? { day: '☀️', night: '🌙' }
-    return isNight ? variant.night : variant.day
+    return match ? Number(match[1]) : new Date().getHours()
 }
 
 function HourlyForecast({ hours, selectedIndex = 0, onHourSelect }: HoursForecastProps) {
@@ -52,6 +29,7 @@ function HourlyForecast({ hours, selectedIndex = 0, onHourSelect }: HoursForecas
         <div className="hour-grid">
             {data.map((hour, index) => {
                 const isActive = selectedIndex === index
+                const iconUrl = getWeatherIconUrl(hour.condition, getHourNumber(hour.hour))
 
                 return (
                     <button
@@ -62,7 +40,7 @@ function HourlyForecast({ hours, selectedIndex = 0, onHourSelect }: HoursForecas
                         style={{ cursor: 'pointer' }}
                     >
                         <span className="time">{hour.hour}</span>
-                        <span className="mini-icon">{getNightAwareIcon(hour.condition, hour.hour)}</span>
+                        <img src={iconUrl} alt={hour.condition} className="mini-icon-svg" width={32} height={32} />
                         <span className="temp">{Math.round(hour.temperature)}°</span>
                     </button>
                 )
