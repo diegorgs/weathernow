@@ -47,7 +47,14 @@ function Navbar() {
         }
         function onScroll() {
             if (locked) {
-                window.scrollTo({ top: savedY, behavior: 'instant' })
+                const diff = Math.abs(window.scrollY - savedY)
+                if (diff < 60) {
+                    // Scroll pequeno = automático do browser, bloqueia
+                    window.scrollTo({ top: savedY, behavior: 'instant' })
+                } else {
+                    // Scroll grande = usuário rolou, atualiza referência
+                    savedY = window.scrollY
+                }
             }
         }
 
