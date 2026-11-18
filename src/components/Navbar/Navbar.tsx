@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getCityCoordinates, getCitySuggestions } from '../../services/api'
@@ -25,6 +26,9 @@ function Navbar() {
 
         return window.matchMedia('(prefers-color-scheme: dark)').matches
     })
+
+    const inputWrapRef = useRef<HTMLDivElement>(null)
+    const [dropPos, setDropPos] = useState<{top:number;left:number;width:number}|null>(null)
 
     const context = useContext(CityContext)
     const navigate = useNavigate()
@@ -216,7 +220,7 @@ function Navbar() {
                             searchCity()
                         }}
                     >
-                        <div className="relative">
+                        <div className="relative" ref={inputWrapRef}>
                             <div
                                 className="flex items-center gap-2 rounded-full border px-3 py-2"
                                 style={{
@@ -239,13 +243,25 @@ function Navbar() {
                                 />
                             </div>
 
-                            {suggestions.length > 0 && (
+                            {suggestions.length > 0 && inputWrapRef.current && (() => {
+                                const r = inputWrapRef.current.getBoundingClientRect()
+                                return createPortal(
                                 <ul
-                                    className="absolute left-0 top-full z-20 mt-2 w-full min-w-[240px] overflow-hidden rounded-2xl border shadow-xl"
                                     style={{
-                                        borderColor: darkMode ? 'rgba(148,163,184,0.18)' : '#e2e8f0',
+                                        position: 'fixed',
+                                        top: r.bottom + 8,
+                                        left: r.left,
+                                        width: r.width,
+                                        minWidth: 240,
+                                        zIndex: 9999,
+                                        borderRadius: '1rem',
+                                        overflow: 'hidden',
+                                        margin: 0,
+                                        padding: 0,
+                                        listStyle: 'none',
+                                        border: `1px solid ${darkMode ? 'rgba(148,163,184,0.18)' : '#e2e8f0'}`,
                                         background: darkMode ? '#0f172a' : '#ffffff',
-                                        boxShadow: darkMode ? '0 8px 24px rgba(2, 6, 23, 0.45)' : '0 8px 24px rgba(15, 23, 42, 0.08)',
+                                        boxShadow: darkMode ? '0 8px 24px rgba(2,6,23,0.45)' : '0 8px 24px rgba(15,23,42,0.08)',
                                     }}
                                 >
                                     {suggestions.map((result) => (
@@ -277,8 +293,9 @@ function Navbar() {
                                             </button>
                                         </li>
                                     ))}
-                                </ul>
-                            )}
+                                </ul>,
+                                document.body)
+                            })()}
                         </div>
 
                         {searchError && (
