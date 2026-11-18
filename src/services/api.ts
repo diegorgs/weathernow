@@ -81,6 +81,20 @@ const TERMOS_CIDADE = '(chuva OR temporal OR tempestade OR "previsão do tempo" 
 // aparece em "clima de tensão", "clima íntimo" etc.
 const PALAVRAS_TEMPO = /\b(chuvas?|chuvos[ao]|temporal|temporais|tempestades?|previsao do tempo|meteorolog\w*|onda de calor|calor|frio|frente fria|massa de ar|alagamentos?|enchentes?|inundac\w*|inmet|granizo|geadas?|ventanias?|vendaval|rajadas?|trovoadas?|trovao|trovoes|ciclone|seca|estiagem|umidade|temperaturas?|defesa civil|climatempo|el nino|la nina|neve)\b/
 
+// Palavras que, se aparecerem no INÍCIO do título, indicam notícia primariamente climática
+const INICIO_CLIMA = /^(chuva|chuvas|temporal|tempestade|alagamento|enchente|granizo|geada|neve|seca|estiagem|onda de calor|frente fria|previsao do tempo|inmet|meteorolog|defesa civil|climatempo|el nino|la nina|ventania|vendaval|ciclone)/
+
+function pontuarNoticia(artigo: NewsArticle): number {
+    const titulo = normalizarTexto(artigo.title)
+    // Título começa com palavra de clima → assunto principal é clima
+    if (INICIO_CLIMA.test(titulo)) return 2
+    // Palavra de clima aparece nas 5 primeiras palavras → clima em destaque
+    const primeiras = titulo.split(/\s+/).slice(0, 5).join(' ')
+    if (PALAVRAS_TEMPO.test(primeiras)) return 1
+    // Clima só aparece como detalhe secundário
+    return 0
+}
+
 function normalizarTexto(texto: string) {
     return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 }
@@ -160,7 +174,10 @@ export async function getClimateNews(cidade?: string): Promise<NewsArticle[]> {
             publishedAt: artigo.publishedAt ?? '',
             source: { name: artigo.source?.name ?? '' },
         }))
-        const articles = removerRepetidas(todos.filter(ehNoticiaDeTempo))
+        const filtradas = removerRepetidas(todos.filter(ehNoticiaDeTempo))
+
+        // Ordena: notícias com clima como assunto principal primeiro
+        const articles = [...filtradas].sort((a, b) => pontuarNoticia(b) - pontuarNoticia(a))
 
         try {
             localStorage.setItem(cacheKey, JSON.stringify({ savedAt: Date.now(), articles }))
