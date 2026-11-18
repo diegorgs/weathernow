@@ -60,7 +60,15 @@ function Navbar() {
         const trimmedCity = city.trim()
 
         if (trimmedCity.length < 2) {
+            const scrollY = window.scrollY
+            document.documentElement.style.scrollBehavior = 'auto'
             setSuggestions([])
+            requestAnimationFrame(() => {
+                window.scrollTo(0, scrollY)
+                requestAnimationFrame(() => {
+                    document.documentElement.style.scrollBehavior = ''
+                })
+            })
             return
         }
 
