@@ -22,42 +22,40 @@ function WeatherCard({ temperature, condition, label = 'Agora', metric = null }:
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)'
     } : undefined
 
-    const textTone = isNight ? { color: '#e2e8f0' } : undefined
-    const subTextTone = isNight ? { color: 'rgba(226, 232, 240, 0.8)' } : undefined
-    const tempTone = isNight ? { color: '#f8fafc' } : undefined
+    const cardClassName = `weather-left${isNight ? ' night-weather-card' : ''}`
 
     if (metric) {
         return (
-            <div className="weather-left" style={cardStyle}>
-                <div className="topline" style={subTextTone}>
+            <div className={cardClassName} style={cardStyle}>
+                <div className="topline">
                     <span>{label}</span>
                 </div>
 
                 <div className="weather-temp-row">
-                    <span className="weather-temp" style={tempTone}>{metric.value}</span>
+                    <span className="weather-temp">{metric.value}</span>
                     <img src={metric.icon} alt={metric.label} className="weather-icon-svg" width={80} height={80} />
                 </div>
 
 
-                <div className="weather-subtitle" style={subTextTone}>{metric.label}</div>
-                <div className="weather-feel" style={subTextTone}>Condição: {condition}</div>
+                <div className="weather-subtitle">{metric.label}</div>
+                <div className="weather-feel">Condição: {condition}</div>
             </div>
         )
     }
 
     return (
-        <div className="weather-left" style={cardStyle}>
-            <div className="topline" style={subTextTone}>
+        <div className={cardClassName} style={cardStyle}>
+            <div className="topline">
                 <span>{label}</span>
             </div>
 
             <div className="weather-temp-row">
-                <span className="weather-temp" style={tempTone}>{temperature}°</span>
+                <span className="weather-temp">{temperature}°</span>
                 <img src={iconUrl} alt={condition} className="weather-icon-svg" width={80} height={80} />
             </div>
 
-            <div className="weather-subtitle" style={subTextTone}>{condition}</div>
-            <div className="weather-feel" style={subTextTone}>Sensação {Math.round(temperature + 1)}°</div>
+            <div className="weather-subtitle">{condition}</div>
+            <div className="weather-feel">Sensação {Math.round(temperature + 1)}°</div>
         </div>
     )
 }

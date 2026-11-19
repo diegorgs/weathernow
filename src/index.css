@@ -656,6 +656,23 @@ input {
   color: rgba(15, 23, 42, 0.7);
   font-weight: 600;
 }
+
+.weather-left.night-weather-card .topline,
+.weather-left.night-weather-card .weather-subtitle,
+.weather-left.night-weather-card .weather-feel {
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.weather-left.night-weather-card .weather-temp {
+  color: #f8fafc;
+}
+
+:root[data-theme='dark'] .weather-left .topline,
+:root[data-theme='dark'] .weather-left .weather-temp,
+:root[data-theme='dark'] .weather-left .weather-subtitle,
+:root[data-theme='dark'] .weather-left .weather-feel {
+  color: #fff;
+}
   
 .loading-header {
   align-items: center;
@@ -849,6 +866,10 @@ input {
   border-color: rgba(96, 165, 250, 0.3);
   box-shadow: 0 12px 24px rgba(59, 130, 246, 0.08);
   background: rgba(255, 255, 255, 0.7);
+}
+
+:root[data-theme='dark'] .weather-stat:hover {
+  background: rgba(30, 41, 59, 0.95);
 }
 
 .weather-stat .icon {
@@ -1208,6 +1229,10 @@ input {
 :root[data-theme='dark'] .alert-card.secondary,
 :root[data-theme='dark'] .alert-card.success {
   color: var(--text-inverse);
+}
+
+:root[data-theme='dark'] .alert-card {
+  color: #000;
 }
 
 .alert-card .title {
