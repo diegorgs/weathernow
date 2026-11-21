@@ -3,59 +3,70 @@
 ## Requisitos
 
 - Python 3.11+
-- MySQL ou MariaDB
 - pip
+- Docker Desktop ou MySQL/MariaDB
 
-## Instalação
+## Instalacao no Windows
 
-```bash
+```powershell
 cd backend
 python -m venv .venv
-source .venv/bin/activate   # Linux/macOS
-.venv\Scripts\activate      # Windows
-pip install -r requirements.txt
+.venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+Copy-Item .env.example .env
 ```
 
-## Variáveis de ambiente
+## Banco com Docker
 
-Copie o arquivo `.env.example` para `.env` e ajuste os valores.
+Na raiz do projeto:
 
-```bash
-copy .env.example .env
+```powershell
+docker compose up -d
+docker compose ps
 ```
 
-## Rodar o backend
+Credenciais padrao:
 
-```bash
+```text
+Banco: weather_now
+Usuario: weather_user
+Senha: weather_pass
+Porta: 3306
+```
+
+## Configuracao
+
+Edite `backend/.env` conforme necessario:
+
+```env
+APP_NAME=WeatherNow API
+DATABASE_URL=mysql+pymysql://weather_user:weather_pass@localhost:3306/weather_now
+SECRET_KEY=altere-esta-chave-para-um-valor-secreto
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+GNEWS_API_KEY=
+```
+
+A chave do GNews e opcional para o backend, mas necessaria para o endpoint de noticias quando usada com essa API.
+
+## Executar
+
+```powershell
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-## Banco de dados
+- API: http://localhost:8000
+- Swagger: http://localhost:8000/docs
+- Verificacao: http://localhost:8000/health
 
-O projeto usa SQLAlchemy com MySQL. O banco pode ser criado pela aplicação automaticamente quando o servidor subir.
+O SQLAlchemy cria as tabelas automaticamente na primeira inicializacao.
 
-### Se quiser criar manualmente no MySQL:
+## Funcionalidades
 
-```sql
-CREATE DATABASE weather_now;
-CREATE USER IF NOT EXISTS 'weather_user'@'localhost' IDENTIFIED BY 'weather_pass';
-GRANT ALL PRIVILEGES ON weather_now.* TO 'weather_user'@'localhost';
-FLUSH PRIVILEGES;
-```
-
-## Funcionalidades incluídas
-
-- cadastro de usuário
-- login com JWT
-- salvamento do histórico de cidades da última sessão
-- preferências do usuário para e-mail diário (ativado/desativado + horário)
-
-## Endpoints principais
-
-- POST `/api/auth/register`
-- POST `/api/auth/login`
-- GET `/api/auth/me`
-- POST `/api/user/session`
-- GET `/api/user/session`
-- GET `/api/user/preferences`
-- POST `/api/user/preferences`
+- Cadastro de usuario
+- Login com JWT
+- Historico de cidades por usuario
+- Preferencias do usuario
+- Cache de noticias climaticas
+- Endpoint de saude da aplicacao
